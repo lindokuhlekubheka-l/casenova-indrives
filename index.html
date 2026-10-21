@@ -1,820 +1,516 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casenova Connection | The Ultimate Mall of Higher Education & Bursary Applications</title>
-    
-    <!-- GOOGLE ADSENSE ACCOUNT VERIFICATION -->
-    <meta name="google-adsense-account" content="ca-pub-8539625352833164">
-    
-    <!-- GOOGLE ADSENSE OFFICIAL SCRIPT -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8539625352833164" crossorigin="anonymous"></script>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            600: '#0d9488',
-                            700: '#0f766e',
-                            800: '#115e59',
-                            900: '#134e4a',
-                            dark: '#0f172a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>Casenova InDrives - Pretoria Edition</title>
+<meta name="google-adsense-account" content="ca-pub-8539625352833164">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8539625352833164" crossorigin="anonymous"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  * { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  body { margin: 0; background: #09090b; color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
+  canvas { display: block; background: #1b381e; }
+  .pulse-anim { animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+<body class="bg-zinc-950 text-white flex flex-col h-screen justify-between">
 
-    <!-- TOP NAVIGATION -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('page1')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-900 to-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
-                    C
-                </div>
-                <div>
-                    <span class="font-bold text-lg text-slate-900 tracking-tight block leading-none">Casenova</span>
-                    <span class="text-xs font-medium text-brand-600 tracking-wider uppercase">Mall of Applications</span>
-                </div>
-            </div>
-
-            <!-- Breadcrumb / Quick Nav -->
-            <nav id="top-nav-bar" class="hidden md:flex items-center space-x-2 text-xs font-semibold text-slate-600">
-                <span class="cursor-pointer hover:text-brand-700" onclick="navigateTo('page1')">Gate</span> / 
-                <span class="cursor-pointer hover:text-brand-700" onclick="checkAuthAndNavigate('page2')">Mall Hub</span> / 
-                <span id="nav-current-label" class="text-brand-700 font-bold">Welcome</span>
-            </nav>
-
-            <!-- User Auth Profile Widget -->
-            <div class="flex items-center space-x-3">
-                <div id="auth-unlogged-state">
-                    <button onclick="openAuthModal('login')" class="text-xs font-semibold text-slate-700 hover:text-brand-700 px-3 py-2">Sign In</button>
-                    <button onclick="openAuthModal('register')" class="bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm">Create Account</button>
-                </div>
-                <div id="auth-logged-state" class="hidden flex items-center space-x-3 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
-                    <div class="w-8 h-8 rounded-full bg-brand-800 text-white flex items-center justify-center font-bold text-xs" id="user-avatar-initial">U</div>
-                    <div class="text-left hidden sm:block">
-                        <span class="text-xs font-bold text-slate-900 block leading-tight" id="user-display-email">student@mail.com</span>
-                        <span class="text-[10px] text-emerald-600 font-semibold"><i class="fa-solid fa-circle text-[6px] mr-1"></i> Mall Pass Active</span>
-                    </div>
-                    <button onclick="logoutUser()" title="Sign Out" class="text-slate-400 hover:text-red-600 ml-2 text-xs">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-            </div>
+<!-- GARAGE SCREEN -->
+<div id="garage" class="fixed inset-0 z-50 bg-zinc-950 overflow-y-auto p-4 max-w-md mx-auto flex flex-col justify-between">
+  <div>
+    <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+      <div>
+        <h1 class="text-3xl font-black tracking-tight text-white">CASENOVA</h1>
+        <div class="text-yellow-400 font-extrabold text-xl tracking-wide flex items-center gap-1">
+          INDRIVES <span class="bg-yellow-400 text-black text-[10px] px-1.5 py-0.5 rounded font-black tracking-normal">PTA</span>
         </div>
-    </header>
-
-    <!-- MAIN CONTAINER (5 PAGES SYSTEM) -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow space-y-6">
-
-        <!-- GLOBAL PREVIOUS PAGE BAR -->
-        <div id="global-back-bar" class="hidden">
-            <button onclick="goBack()" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm flex items-center w-fit">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Previous Page
-            </button>
-        </div>
-
-        <!-- AD 1: TOP HEADER BANNER (AdSense Policy Compliant Auto Ad) -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-2.5 text-center shadow-sm overflow-hidden">
-            <span class="text-[9px] uppercase font-bold text-slate-400 block mb-1">Sponsored Advertisement</span>
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-8539625352833164"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        <!-- ================= PAGE 1: GATEWAY & AUTHENTICATION ================= -->
-        <section id="page1" class="space-y-8">
-            <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 rounded-3xl p-8 sm:p-14 text-white shadow-xl relative overflow-hidden">
-                <div class="max-w-2xl relative z-10 space-y-5">
-                    <span class="inline-block bg-brand-700/60 text-brand-100 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-brand-500/30">
-                        South Africa's Central Mall of Higher Education Applications
-                    </span>
-                    <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">Welcome to Casenova Connection Mall</h1>
-                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-                        Your one-stop application portal for every public university, public/private college, NSFAS, local bursaries, and fully-funded international scholarships. Create your account or sign in with your verified profile to enter the mall.
-                    </p>
-                    <div class="flex flex-wrap gap-3 pt-3">
-                        <button onclick="openAuthModal('register')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold px-6 py-3.5 rounded-xl text-sm transition shadow-lg flex items-center">
-                            <i class="fa-solid fa-user-plus mr-2"></i> Create Mall Account
-                        </button>
-                        <button onclick="openAuthModal('login')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3.5 rounded-xl text-sm transition border border-white/20 flex items-center">
-                            <i class="fa-solid fa-right-to-bracket mr-2"></i> Sign In to Mall
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= PAGE 2: THE MALL DASHBOARD (HUB) ================= -->
-        <section id="page2" class="hidden space-y-8">
-            <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 rounded-3xl p-8 text-white shadow-xl">
-                <div class="max-w-2xl space-y-3">
-                    <span class="bg-emerald-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Mall Lobby Active</span>
-                    <h1 class="text-3xl font-black tracking-tight">Select Your Destination in the Mall</h1>
-                    <p class="text-slate-300 text-sm">Choose what you want to pursue today. Access full funding catalogs, 26 public universities, or all public and private colleges instantly.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Bursaries & Funding Destination -->
-                <div onclick="checkAuthAndNavigate('page3')" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:border-emerald-500 cursor-pointer transition group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-bold mb-5 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-sack-dollar"></i>
-                        </div>
-                        <h3 class="font-black text-slate-900 text-xl mb-2">Bursaries & Funding</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Explore all public, private, government (NSFAS, Funza Lushaka, ISFAP), SETA, corporate, and international scholarships.</p>
-                    </div>
-                    <div class="mt-6 flex items-center text-xs font-bold text-emerald-700">
-                        Browse Funding Catalog <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </div>
-                </div>
-
-                <!-- Universities Destination -->
-                <div onclick="openInstitutionCategory('university')" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:border-brand-500 cursor-pointer transition group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-brand-100 text-brand-800 flex items-center justify-center text-2xl font-bold mb-5 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                        <h3 class="font-black text-slate-900 text-xl mb-2">Universities (All 26)</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Browse all public South African universities, check Open/Closed statuses, calculate APS, view prospectuses, and apply.</p>
-                    </div>
-                    <div class="mt-6 flex items-center text-xs font-bold text-brand-700">
-                        View All Universities <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </div>
-                </div>
-
-                <!-- Colleges Destination -->
-                <div onclick="openInstitutionCategory('college')" class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:border-brand-500 cursor-pointer transition group flex flex-col justify-between">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-2xl font-bold mb-5 group-hover:scale-110 transition">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </div>
-                        <h3 class="font-black text-slate-900 text-xl mb-2">Public & Private Colleges</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Browse all TVET colleges, nursing colleges, and vocational institutions with direct application portals.</p>
-                    </div>
-                    <div class="mt-6 flex items-center text-xs font-bold text-indigo-700">
-                        View All Colleges <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= PAGE 3: BURSARIES & FUNDING CATALOG ================= -->
-        <section id="page3" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-6 gap-4">
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900">Bursaries & Funding Catalog</h1>
-                        <p class="text-sm text-slate-500 mt-1">Explore all public, private, government, SETA, corporate, and international funding options.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="filterCatalog('all')" id="cat-btn-all" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition">All Funding</button>
-                        <button onclick="filterCatalog('government')" id="cat-btn-government" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Government & NSFAS</button>
-                        <button onclick="filterCatalog('seta')" id="cat-btn-seta" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">SETA Bursaries</button>
-                        <button onclick="filterCatalog('corporate')" id="cat-btn-corporate" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Corporate & Private</button>
-                        <button onclick="filterCatalog('international')" id="cat-btn-international" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">🌍 International Scholarships</button>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <input type="text" id="catalog-search" oninput="searchCatalog()" placeholder="Search by bursary name, provider, or field of study..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                </div>
-
-                <!-- AD 2: CATALOG IN-FEED BANNER -->
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-center shadow-sm overflow-hidden">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 block mb-1">Sponsored Funding Partner</span>
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="ca-pub-8539625352833164"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                </div>
-
-                <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-                    <!-- Populated via JS -->
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= PAGE 4: INSTITUTIONS DIRECTORY & WORKSPACE ================= -->
-        <section id="page4" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-6 gap-4">
-                    <div>
-                        <h1 id="directory-page-title" class="text-2xl sm:text-3xl font-black text-slate-900">Institutions Directory</h1>
-                        <p class="text-sm text-slate-500 mt-1">Select your institution of choice to calculate your APS, view prospectuses, and apply directly.</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="switchDirectoryTab('university')" id="dir-tab-uni" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition">Universities</button>
-                        <button onclick="switchDirectoryTab('college')" id="dir-tab-college" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Colleges</button>
-                    </div>
-                </div>
-
-                <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= PAGE 4B: INSTITUTION WORKSPACE (APS & PROSPECTUS) ================= -->
-        <section id="page4b" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <div>
-                        <h1 id="ws-inst-name" class="text-2xl font-black text-slate-900">Institution Workspace</h1>
-                        <p class="text-xs text-slate-500 mt-0.5">Location: <span id="ws-inst-loc" class="font-semibold">Gauteng</span> • Min APS Required: <span id="ws-inst-aps" class="font-bold text-brand-700">20</span></p>
-                    </div>
-                    <span id="ws-inst-status" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">Open</span>
-                </div>
-
-                <!-- APS Calculator Box -->
-                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
-                    <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-calculator mr-2 text-brand-700"></i>Calculate Your APS for this Institution</h3>
-                    <div id="subjects-container" class="space-y-3">
-                        <div class="grid grid-cols-12 gap-3 font-semibold text-xs text-slate-500 uppercase tracking-wider px-1">
-                            <span class="col-span-7 sm:col-span-8">Subject Name</span>
-                            <span class="col-span-5 sm:col-span-4">Percentage (%)</span>
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" value="English (Home / FAL)" readonly class="col-span-7 sm:col-span-8 bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 font-medium">
-                            <input type="number" min="0" max="100" placeholder="e.g. 65" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" value="Mathematics / Math Literacy" readonly class="col-span-7 sm:col-span-8 bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 font-medium">
-                            <input type="number" min="0" max="100" placeholder="e.g. 70" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" value="Life Orientation (Excluded)" readonly class="col-span-7 sm:col-span-8 bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-500 italic">
-                            <input type="number" min="0" max="100" placeholder="e.g. 80" oninput="calculateAPS()" class="aps-lo-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" placeholder="Subject 4 (e.g. Physical Sciences)" class="col-span-7 sm:col-span-8 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                            <input type="number" min="0" max="100" placeholder="e.g. 60" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" placeholder="Subject 5 (e.g. Geography)" class="col-span-7 sm:col-span-8 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                            <input type="number" min="0" max="100" placeholder="e.g. 58" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" placeholder="Subject 6 (e.g. Accounting)" class="col-span-7 sm:col-span-8 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                            <input type="number" min="0" max="100" placeholder="e.g. 62" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                        <div class="grid grid-cols-12 gap-3 items-center">
-                            <input type="text" placeholder="Subject 7 (e.g. Life Sciences)" class="col-span-7 sm:col-span-8 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                            <input type="number" min="0" max="100" placeholder="e.g. 71" oninput="calculateAPS()" class="aps-score-input col-span-5 sm:col-span-4 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div class="bg-brand-900 text-white rounded-xl p-4 flex items-center justify-between shadow">
-                        <div>
-                            <span class="text-[10px] uppercase font-bold tracking-wider text-brand-200">Total Calculated APS Score</span>
-                            <div class="text-3xl font-extrabold" id="total-aps-display">0</div>
-                        </div>
-                        <div id="aps-eligibility-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-700 text-slate-200">
-                            Enter Marks
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons: Prospectus & Official Apply Now -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                    <a id="ws-prospectus-btn" href="#" target="_blank" class="bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl text-center text-sm transition shadow flex items-center justify-center">
-                        <i class="fa-solid fa-book-open mr-2"></i> View Official Prospectus ↗
-                    </a>
-                    <a id="ws-apply-btn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-xl text-center text-sm transition shadow flex items-center justify-center">
-                        <i class="fa-solid fa-paper-plane mr-2"></i> Apply Now on Official Portal ↗
-                    </a>
-                </div>
-            </div>
-        </section>
-
-
-        <!-- ================= PAGE 5: APPLICATION REDIRECT CONFIRMATION ================= -->
-        <section id="page5" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm max-w-xl mx-auto text-center space-y-5">
-                <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                    <i class="fa-solid fa-external-link"></i>
-                </div>
-                <h1 class="text-2xl font-black text-slate-900">Redirecting to Official Application Portal</h1>
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    You are now leaving Casenova Connection Mall and entering the secure official application portal for <strong id="redirect-inst-name" class="text-slate-900">University</strong>. Please complete your registration and submission directly on their official website.
-                </p>
-                <div class="pt-4 flex gap-3">
-                    <button onclick="navigateTo('page2')" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 rounded-xl text-xs transition">
-                        Return to Mall Lobby
-                    </button>
-                    <a id="final-redirect-link" href="#" target="_blank" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 rounded-xl text-xs transition">
-                        Proceed Now ↗
-                    </a>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12 space-y-3">
-        <!-- AD 3: FOOTER BANNER (AdSense Policy Compliant) -->
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-white border border-slate-200 rounded-xl p-2 text-center shadow-sm">
-                <span class="text-[9px] uppercase font-bold text-slate-400 block mb-1">Sponsored Advertisement</span>
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-8539625352833164"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center text-xs text-slate-500 space-y-2 pt-2">
-            <div class="flex justify-center space-x-4 mb-2">
-                <a href="#" onclick="alert('Privacy Policy: Casenova Connection respects student privacy and uses standard cookies for session authentication and Google AdSense monetization.'); return false;" class="text-brand-700 font-bold hover:underline">Privacy Policy</a>
-                <span class="text-slate-300">|</span>
-                <a href="#" onclick="alert('Terms: Direct application gateway for South African higher education.'); return false;" class="text-slate-600 hover:underline">Terms of Use</a>
-            </div>
-            <p>&copy; 2026 Casenova Connection. All rights reserved.</p>
-            <p class="text-slate-400">The Mall of Higher Education Applications • Direct Official Portals</p>
-        </div>
-    </footer>
-
-
-    <!-- AUTH MODAL -->
-    <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 relative border border-slate-100">
-            <button onclick="closeAuthModal()" class="absolute right-5 top-5 text-slate-400 hover:text-slate-600">
-                <i class="fa-solid fa-times text-xl"></i>
-            </button>
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-brand-700 text-white flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-user-lock"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-900 text-lg" id="auth-modal-title">Mall Account Access</h3>
-                    <p class="text-xs text-slate-500" id="auth-modal-subtitle">Sign in with your registered account</p>
-                </div>
-            </div>
-
-            <div id="auth-error-box" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs font-semibold"></div>
-
-            <div class="flex bg-slate-100 p-1 rounded-xl">
-                <button type="button" onclick="switchAuthMode('login')" id="modal-tab-login" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition">Sign In</button>
-                <button type="button" onclick="switchAuthMode('register')" id="modal-tab-register" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 transition">Create Account</button>
-            </div>
-
-            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
-                <div id="register-name-field" class="hidden space-y-1">
-                    <label class="block text-xs font-semibold text-slate-700 uppercase">Full Name</label>
-                    <input type="text" id="auth-fullname" placeholder="John Smith" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold text-slate-700 uppercase">Email Address</label>
-                    <input type="email" id="auth-email" required placeholder="student@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                </div>
-                <div class="space-y-1">
-                    <label class="block text-xs font-semibold text-slate-700 uppercase">Password</label>
-                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-brand-600 focus:outline-none">
-                </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-brand-700 hover:bg-brand-800 text-white font-bold py-3 rounded-xl transition text-sm shadow">
-                    Sign In to Mall
-                </button>
-            </form>
-        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-zinc-400 font-semibold">CASH BALANCE</div>
+        <div id="moneyDisplay" class="text-2xl font-black text-green-400">R100,000</div>
+      </div>
     </div>
 
+    <!-- Stats & Options -->
+    <div class="grid grid-cols-3 gap-2 my-3 text-center text-xs">
+      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
+        <div class="text-zinc-400 text-[10px]">TRIPS</div>
+        <div id="statTrips" class="font-bold text-sm text-yellow-400">0</div>
+      </div>
+      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
+        <div class="text-zinc-400 text-[10px]">EARNINGS</div>
+        <div id="statEarnings" class="font-bold text-sm text-green-400">R0</div>
+      </div>
+      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
+        <div class="text-zinc-400 text-[10px]">RATING</div>
+        <div id="statRating" class="font-bold text-sm text-yellow-400">5.0 ⭐</div>
+      </div>
+    </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const INSTITUTIONS = {
-            universities: [
-                { id: 'uct', name: 'University of Cape Town (UCT)', location: 'Western Cape', apsMin: 30, type: 'University', status: 'Closed', prospectus: 'https://www.uct.ac.za/apply/prospectus', applyUrl: 'https://applyonline.uct.ac.za', courses: ['BSc Data Science', 'Bachelor of Laws (LLB)'] },
-                { id: 'wits', name: 'University of the Witwatersrand (Wits)', location: 'Gauteng', apsMin: 34, type: 'University', status: 'Closed', prospectus: 'https://www.wits.ac.za/undergraduate/prospectus/', applyUrl: 'https://www.wits.ac.za/applications/', courses: ['BSc Engineering', 'Bachelor of Accounting'] },
-                { id: 'up', name: 'University of Pretoria (UP)', location: 'Pretoria', apsMin: 30, type: 'University', status: 'Closed', prospectus: 'https://www.up.ac.za/yearbooks/home', applyUrl: 'https://www.up.ac.za/online-application', courses: ['BSc Computer Science', 'MBChB Medicine'] },
-                { id: 'uj', name: 'University of Johannesburg (UJ)', location: 'Gauteng', apsMin: 28, type: 'University', status: 'Open', prospectus: 'https://www.uj.ac.za/study/apply/', applyUrl: 'https://www.uj.ac.za/study/admission-criteria/', courses: ['BCom Accounting', 'BSc IT', 'Diploma in Logistics'] },
-                { id: 'ukzn', name: 'University of KwaZulu-Natal (UKZN)', location: 'KZN', apsMin: 28, type: 'University', status: 'Closed', prospectus: 'https://ukzn.ac.za', applyUrl: 'https://caeo.ukzn.ac.za', courses: ['Pharmacy', 'Health Sciences'] },
-                { id: 'su', name: 'Stellenbosch University (SU)', location: 'Western Cape', apsMin: 30, type: 'University', status: 'Closed', prospectus: 'https://www.sun.ac.za', applyUrl: 'https://www.sun.ac.za/english/enrolment', courses: ['BCom Economics', 'AgriSciences'] },
-                { id: 'nwu', name: 'North-West University (NWU)', location: 'North West', apsMin: 22, type: 'University', status: 'Closed', prospectus: 'https://www.nwu.ac.za', applyUrl: 'https://admission.nwu.ac.za', courses: ['Education', 'Engineering'] },
-                { id: 'ufs', name: 'University of the Free State (UFS)', location: 'Free State', apsMin: 24, type: 'University', status: 'Closed', prospectus: 'https://www.ufs.ac.za', applyUrl: 'https://apply.ufs.ac.za', courses: ['Human Movement Science', 'Humanities'] },
-                { id: 'uwc', name: 'University of the Western Cape (UWC)', location: 'Western Cape', apsMin: 26, type: 'University', status: 'Closed', prospectus: 'https://www.uwc.ac.za', applyUrl: 'https://www.uwc.ac.za/studying-at-uwc/admission-requirements', courses: ['Law', 'Community Development'] },
-                { id: 'rhodes', name: 'Rhodes University (RU)', location: 'Eastern Cape', apsMin: 30, type: 'University', status: 'Closed', prospectus: 'https://www.ru.ac.za', applyUrl: 'https://www.ru.ac.za/admission', courses: ['Journalism', 'Arts & Commerce'] },
-                { id: 'tut', name: 'Tshwane University of Technology (TUT)', location: 'Gauteng', apsMin: 18, type: 'University', status: 'Open', prospectus: 'https://www.tut.ac.za/study-at-tut/prospectus', applyUrl: 'https://www.tut.ac.za', courses: ['Geomatics', 'National Diploma IT', 'Engineering'] },
-                { id: 'dut', name: 'Durban University of Technology (DUT)', location: 'KZN', apsMin: 20, type: 'University', status: 'Open', prospectus: 'https://www.dut.ac.za', applyUrl: 'https://www.dut.ac.za/enrolment_services/', courses: ['Applied Sciences', 'Accounting'] },
-                { id: 'vut', name: 'Vaal University of Technology (VUT)', location: 'Gauteng', apsMin: 21, type: 'University', status: 'Open', prospectus: 'https://www.vut.ac.za/prospectus/', applyUrl: 'https://www.vut.ac.za', courses: ['Chemical Engineering', 'Fine Arts'] },
-                { id: 'ump', name: 'University of Mpumalanga (UMP)', location: 'Mpumalanga', apsMin: 20, type: 'University', status: 'Open', prospectus: 'https://www.ump.ac.za', applyUrl: 'https://www.ump.ac.za', courses: ['Bachelor of Education', 'BSc Agriculture'] },
-                { id: 'wsu', name: 'Walter Sisulu University (WSU)', location: 'Eastern Cape', apsMin: 20, type: 'University', status: 'Open', prospectus: 'https://www.wsu.ac.za', applyUrl: 'https://www.wsu.ac.za', courses: ['Public Management', 'Nursing'] },
-                { id: 'ufh', name: 'University of Fort Hare (UFH)', location: 'Eastern Cape', apsMin: 22, type: 'University', status: 'Open', prospectus: 'https://www.ufh.ac.za', applyUrl: 'https://www.ufh.ac.za', courses: ['Bachelor of Laws (LLB)', 'Social Sciences'] },
-                { id: 'univen', name: 'University of Venda (Univen)', location: 'Limpopo', apsMin: 21, type: 'University', status: 'Open', prospectus: 'https://www.univen.ac.za', applyUrl: 'https://www.univen.ac.za', courses: ['Mining Engineering', 'Law'] },
-                { id: 'ul', name: 'University of Limpopo (UL)', location: 'Limpopo', apsMin: 24, type: 'University', status: 'Open', prospectus: 'https://www.ul.ac.za', applyUrl: 'https://www.ul.ac.za', courses: ['Medicine', 'Molecular & Life Sciences'] },
-                { id: 'unizulu', name: 'University of Zululand (Unizulu)', location: 'KZN', apsMin: 20, type: 'University', status: 'Open', prospectus: 'https://www.unizulu.ac.za', applyUrl: 'https://www.unizulu.ac.za', courses: ['Hydrology', 'Commerce'] },
-                { id: 'spu', name: 'Sol Plaatje University (SPU)', location: 'Northern Cape', apsMin: 20, type: 'University', status: 'Open', prospectus: 'https://www.spu.ac.za', applyUrl: 'https://www.spu.ac.za', courses: ['Data Science', 'Retail Management'] },
-                { id: 'mut', name: 'Mangosuthu University of Technology (MUT)', location: 'KZN', apsMin: 18, type: 'University', status: 'Open', prospectus: 'https://www.mut.ac.za', applyUrl: 'https://www.mut.ac.za', courses: ['Analytical Chemistry', 'Town Planning'] },
-                { id: 'unisa', name: 'University of South Africa (UNISA)', location: 'Distance Learning / National', apsMin: 18, type: 'University', status: 'Open', prospectus: 'https://www.unisa.ac.za', applyUrl: 'https://www.unisa.ac.za/sites/corporate/default/Apply-for-admission', courses: ['Higher Certificate in Education', 'BCom'] }
-            ],
-            colleges: [
-                { id: 'tsc', name: 'Tshwane South TVET College', location: 'Pretoria South', apsMin: 15, type: 'TVET College', status: 'Open', prospectus: 'https://www.tsc.edu.za', applyUrl: 'https://www.tsc.edu.za', courses: ['NATED Engineering N1-N6', 'Business Management'] },
-                { id: 'tnc', name: 'Tshwane North TVET College', location: 'Pretoria North', apsMin: 15, type: 'TVET College', status: 'Closed', prospectus: 'https://www.tnc.edu.za', applyUrl: 'https://www.tnc.edu.za', courses: ['NCV Information Technology', 'Civil Engineering'] },
-                { id: 'sedibeng', name: 'Sedibeng TVET College', location: 'Vereeniging', apsMin: 16, type: 'TVET College', status: 'Open', prospectus: 'https://www.sedcol.co.za', applyUrl: 'https://www.sedcol.co.za', courses: ['Financial Management', 'Electrical Engineering'] },
-                { id: 'swg', name: 'South West Gauteng TVET College', location: 'Gauteng', apsMin: 16, type: 'TVET College', status: 'Open', prospectus: 'https://swgtvet.co.za', applyUrl: 'https://swgtvet.co.za', courses: ['Hospitality', 'Management Assistant'] },
-                { id: 'cpt-central', name: 'Cape Town Central TVET College', location: 'Western Cape', apsMin: 15, type: 'TVET College', status: 'Open', prospectus: 'https://www.cptcentral.edu.za', applyUrl: 'https://www.cptcentral.edu.za', courses: ['Tourism', 'Safety in Society'] },
-                { id: 'gcon', name: 'Gauteng College of Nursing (GCON)', location: 'Gauteng', apsMin: 27, type: 'Nursing College', status: 'Closed', prospectus: 'https://nursingintake.gauteng.gov.za', applyUrl: 'https://nursingintake.gauteng.gov.za', courses: ['Diploma in Nursing Practice'] },
-                { id: 'kzn-nursing', name: 'KwaZulu-Natal Department of Health Nursing', location: 'KZN', apsMin: 25, type: 'Nursing College', status: 'Open', prospectus: 'http://www.kznhealth.gov.za', applyUrl: 'http://www.kznhealth.gov.za', courses: ['General Nursing Science'] }
-            ]
-        };
+    <!-- Sound Toggle -->
+    <div class="flex justify-between items-center bg-zinc-900 p-2.5 rounded-xl border border-zinc-800 my-2 text-xs">
+      <span class="font-bold">🔊 Web Audio Synth FX</span>
+      <button onclick="toggleAudio()" id="audioBtn" class="bg-yellow-400 text-black font-black px-3 py-1 rounded-lg">ENABLED</button>
+    </div>
 
-        const BURSARIES_CATALOG = [
-            { id: 'nsfas', name: 'NSFAS Government Bursary', category: 'government', provider: 'Government', amount: 'Full Cover (Tuition, Acc, Living, Books)', desc: 'Covers public university & TVET students with combined household income under R350k/year.', link: 'https://www.nsfas.org.za' },
-            { id: 'funza', name: 'Funza Lushaka Teaching Bursary', category: 'government', provider: 'Department of Basic Education', amount: 'Full Cover + Stipend', desc: 'For students pursuing Bachelor of Education in priority teaching subjects.', link: 'https://www.funzalushaka.doe.gov.za' },
-            { id: 'isfap', name: 'ISFAP Missing Middle Bursary', category: 'government', provider: 'ISFAP', amount: 'Comprehensive Funding + Mentorship', desc: 'Funding for students from households earning between R350,000 and R600,000 annually.', link: 'https://www.isfap.org.za' },
-            { id: 'hwseta', name: 'HWSETA Health & Social Services Bursary', category: 'seta', provider: 'HWSETA', amount: 'Full Tuition & Books', desc: 'Supporting scarce skills qualifications in health and community development.', link: 'https://www.hwseta.org.za' },
-            { id: 'fasset', name: 'Fasset Finance & Accounting Bursary', category: 'seta', provider: 'Fasset SETA', amount: 'Full or Partial Funding', desc: 'Dedicated funding for finance, accounting, auditing, and commerce students.', link: 'https://www.fasset.org.za' },
-            { id: 'capitec', name: 'Capitec Bank Tertiary Bursary', category: 'corporate', provider: 'Capitec Bank', amount: 'Full Tuition + Laptop', desc: 'For high-achieving students in ICT, Data Science, Mathematics, and Commerce.', link: 'https://www.capitecbank.co.za' },
-            { id: 'absa', name: 'Absa Fellowship & Bursary Scheme', category: 'corporate', provider: 'Absa Group', amount: 'Comprehensive Funding + Mentorship', desc: 'Financial support paired with leadership development and graduate employment pipelines.', link: 'https://www.absa.co.za' },
-            { id: 'chevening', name: 'Chevening International Scholarship', category: 'international', provider: 'UK Government', amount: 'Fully Funded Master’s Abroad', desc: 'Global scholarship program enabling outstanding emerging leaders to pursue master’s degrees in the UK.', link: 'https://www.chevening.org' },
-            { id: 'fulbright', name: 'Fulbright Foreign Student Program', category: 'international', provider: 'US Department of State', amount: 'Full Tuition & Living Expenses USA', desc: 'Funds Master’s and Ph.D. studies at top universities in the United States.', link: 'https://za.usembassy.gov' },
-            { id: 'commonwealth', name: 'Commonwealth Master’s Scholarships', category: 'international', provider: 'Commonwealth Scholarship Commission', amount: 'Full Airfare, Tuition & Stipend', desc: 'For candidates from developing Commonwealth countries to study in the UK.', link: 'https://cscuk.fcdo.gov.uk' }
-        ];
+    <h2 class="text-sm font-bold text-zinc-400 mt-4 mb-2">PRETORIA FLEET - BUY & UPGRADE</h2>
+    <div id="shopList" class="space-y-3 mb-4"></div>
+  </div>
 
-        let currentUser = null;
-        let activeDirectoryType = 'university';
-        let currentSelectedInstitution = null;
-        let calculatedAPS = 0;
-        let pageHistory = ['page1'];
-        let isRegisterMode = false;
+  <!-- Ad Banner -->
+  <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800 text-center my-2">
+    <span class="text-[9px] text-zinc-500 font-bold block mb-1">SPONSORED ADVERTISEMENT</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8539625352833164" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+</div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            checkExistingSession();
-            renderCatalog('all');
-            renderDirectory('university');
-        });
+<!-- DRIVING SCREEN HUD -->
+<div id="hud" class="hidden fixed top-0 left-0 right-0 z-40 bg-zinc-900/90 backdrop-blur border-b border-zinc-800 p-2 text-xs max-w-md mx-auto flex justify-between items-center">
+  <div class="flex items-center gap-2">
+    <button onclick="exitToGarage()" class="bg-zinc-800 p-2 rounded-lg font-bold text-zinc-300">⬅️ Garage</button>
+    <div>
+      <div id="hMoney" class="font-black text-green-400 text-sm">R100,000</div>
+      <div id="hJob" class="text-[10px] text-yellow-400 font-semibold truncate max-w-[130px]">Searching for trip...</div>
+    </div>
+  </div>
+  <div class="text-right">
+    <div id="hFuel" class="font-bold text-white">⛽ 100%</div>
+    <div id="hNitro" class="text-[10px] text-cyan-400 font-bold">⚡ NITRO READY</div>
+  </div>
+</div>
 
-        function checkExistingSession() {
-            const saved = localStorage.getItem('casenova_active_session');
-            if (saved) {
-                currentUser = JSON.parse(saved);
-                updateAuthUI();
-                navigateTo('page2', false);
-            }
+<!-- BIDDING POPUP MODAL -->
+<div id="bidModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+  <div class="bg-zinc-900 border border-yellow-400/40 p-5 rounded-2xl max-w-xs w-full text-center space-y-3">
+    <div class="text-3xl" id="bAvatar">👤</div>
+    <div class="text-xs text-yellow-400 font-bold uppercase tracking-wider" id="bLocation">CHURCH SQUARE ➔ HATFIELD</div>
+    <div class="text-sm italic text-zinc-300" id="bSlang">"O kae gauta? Standard trip."</div>
+    <div class="text-2xl font-black text-green-400" id="bFare">R150</div>
+    <div class="grid grid-cols-2 gap-2 pt-2">
+      <button onclick="acceptTrip()" class="bg-green-500 text-black font-black py-3 rounded-xl text-xs pulse-anim">ACCEPT FARE</button>
+      <button onclick="counterBid()" class="bg-yellow-400 text-black font-black py-3 rounded-xl text-xs">COUNTER +R30</button>
+    </div>
+    <button onclick="declineTrip()" class="w-full bg-zinc-800 text-zinc-400 text-xs py-2 rounded-xl">Decline Request</button>
+  </div>
+</div>
+
+<!-- MAIN CANVAS ENGINE -->
+<div id="canvasContainer" class="hidden relative flex-1 flex justify-center items-center">
+  <canvas id="c" width="400" height="520" class="w-full max-w-md h-full object-contain"></canvas>
+  
+  <!-- TRIP FINISHED AD OVERLAY -->
+  <div id="tripAdOverlay" class="hidden absolute inset-0 bg-black/90 z-40 flex flex-col justify-center items-center p-4 text-center">
+    <div class="text-2xl font-black text-yellow-400 mb-2">TRIP COMPLETED!</div>
+    <div id="adFareEarned" class="text-xl font-bold text-green-400 mb-4">+R0 Earned</div>
+    <div class="bg-white p-2 rounded-xl text-black w-full max-w-xs mb-4">
+      <span class="text-[9px] font-bold text-zinc-600 block">SPONSORED ADVERTISEMENT</span>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8539625352833164" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+    <div class="text-xs text-zinc-400">Continuing trip in <span id="adCountdown">3</span>s...</div>
+  </div>
+</div>
+
+<!-- TOUCH CONTROLS -->
+<div id="controls" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 border-t border-zinc-800 p-2 max-w-md mx-auto">
+  <div class="grid grid-cols-4 gap-2 mb-2">
+    <button id="btnLeft" class="bg-zinc-800 active:bg-zinc-700 py-4 rounded-xl text-xl font-bold">⬅️</button>
+    <button id="btnRight" class="bg-zinc-800 active:bg-zinc-700 py-4 rounded-xl text-xl font-bold">➡️</button>
+    <button id="btnPick" class="bg-yellow-400 text-black font-black py-4 rounded-xl text-xs col-span-2">PICK / DROP</button>
+  </div>
+  <div class="grid grid-cols-3 gap-2">
+    <button onclick="triggerHoot()" class="bg-zinc-800 active:bg-zinc-700 py-2 rounded-lg text-xs font-bold text-yellow-400">📢 HOOT</button>
+    <button onclick="triggerNitro()" class="bg-cyan-600 active:bg-cyan-500 py-2 rounded-lg text-xs font-bold text-white">⚡ NITRO</button>
+    <button onclick="watchAdForFuel()" class="bg-green-600 active:bg-green-500 py-2 rounded-lg text-xs font-bold text-white">⛽ REFUEL (AD)</button>
+  </div>
+</div>
+
+<script>
+// PERSISTENT STATE & STORAGE
+let money = parseInt(localStorage.getItem('indrive_money')) || 100000;
+let tripsCompleted = parseInt(localStorage.getItem('indrive_trips')) || 0;
+let totalEarnings = parseInt(localStorage.getItem('indrive_earnings')) || 0;
+let ownedCarIds = JSON.parse(localStorage.getItem('indrive_owned')) || ['corolla'];
+let activeCarId = localStorage.getItem('indrive_active') || 'corolla';
+let upgrades = JSON.parse(localStorage.getItem('indrive_upgrades')) || { speed: 1, fuel: 1 };
+let audioEnabled = true;
+
+const cars = [
+  { id: 'corolla', name: 'Toyota Corolla 2008', price: 75000, speed: 3.2, fuelBurn: 0.015, img: '🚗', desc: 'Reliable kasi workhorse. Low fuel burn.' },
+  { id: 'polo', name: 'VW Polo Vivo', price: 95000, speed: 4.2, fuelBurn: 0.02, img: '🚙', desc: 'Agile & fast through Pretoria traffic.' },
+  { id: 'quantum', name: 'Toyota Quantum Siyaya', price: 120000, speed: 2.8, fuelBurn: 0.025, img: '🚐', desc: 'Carry multi-passengers for double fares!' },
+  { id: 'bmw', name: 'BMW 320i E30 Gusheshe', price: 150000, speed: 5.5, fuelBurn: 0.035, img: '🏎️', desc: 'Kasi legend. Rapid acceleration & pops.' },
+  { id: 'gti', name: 'Golf 7 GTI Vrr Pha', price: 180000, speed: 5.8, fuelBurn: 0.038, img: '🏎️', desc: 'Exhaust pops & high passenger tips!' },
+  { id: 'benz', name: 'Mercedes V-Class VIP', price: 250000, speed: 4.8, fuelBurn: 0.022, img: '🚘', desc: 'VIP InDrive trips with massive payouts.' }
+];
+
+const spots = [
+  { x: 60, y: 80, name: 'Church Square' },
+  { x: 340, y: 90, name: 'Loftus Versfeld' },
+  { x: 80, y: 320, name: 'Sunnyside' },
+  { x: 320, y: 340, name: 'Hatfield Gautrain' },
+  { x: 200, y: 180, name: 'Pretoria CBD' },
+  { x: 300, y: 460, name: 'Menlyn Park' },
+  { x: 80, y: 460, name: 'Union Buildings' }
+];
+
+const slangList = [
+  "Eish bra, take me quickly!", "Dankie ntwan'a!", "O kae gauta?", "Pretoria West broer!", "Sharp sharp captain!"
+];
+
+// WEB AUDIO API SYNTHESIZER
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function initAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+}
+
+function playTone(freq, type, duration, gainVal=0.1) {
+  if (!audioEnabled) return;
+  initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+function triggerHoot() {
+  playTone(440, 'sawtooth', 0.15, 0.2);
+  setTimeout(() => playTone(550, 'sawtooth', 0.25, 0.2), 80);
+}
+
+function playCoinChime() {
+  playTone(987.77, 'sine', 0.1, 0.15);
+  setTimeout(() => playTone(1318.51, 'sine', 0.3, 0.2), 100);
+}
+
+function playPopExhaust() {
+  playTone(120, 'square', 0.05, 0.3);
+  setTimeout(() => playTone(80, 'square', 0.08, 0.3), 40);
+}
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  document.getElementById('audioBtn').innerText = audioEnabled ? 'ENABLED' : 'DISABLED';
+  document.getElementById('audioBtn').className = audioEnabled ? 'bg-yellow-400 text-black font-black px-3 py-1 rounded-lg' : 'bg-zinc-800 text-zinc-400 font-bold px-3 py-1 rounded-lg';
+}
+
+// GARAGE & SHOP RENDERER
+function saveState() {
+  localStorage.setItem('indrive_money', money);
+  localStorage.setItem('indrive_trips', tripsCompleted);
+  localStorage.setItem('indrive_earnings', totalEarnings);
+  localStorage.setItem('indrive_owned', JSON.stringify(ownedCarIds));
+  localStorage.setItem('indrive_active', activeCarId);
+  localStorage.setItem('indrive_upgrades', JSON.stringify(upgrades));
+}
+
+function updateGarageUI() {
+  document.getElementById('moneyDisplay').innerText = 'R' + money.toLocaleString();
+  document.getElementById('statTrips').innerText = tripsCompleted;
+  document.getElementById('statEarnings').innerText = 'R' + totalEarnings.toLocaleString();
+  
+  const shop = document.getElementById('shopList');
+  shop.innerHTML = '';
+
+  cars.forEach(car => {
+    const isOwned = ownedCarIds.includes(car.id);
+    const isActive = activeCarId === car.id;
+    
+    let btnHTML = '';
+    if (isActive) {
+      btnHTML = `<span class="bg-green-500/20 text-green-400 border border-green-500/40 text-[10px] font-black px-3 py-1.5 rounded-lg">DRIVING NOW</span>`;
+    } else if (isOwned) {
+      btnHTML = `<button onclick="selectCar('${car.id}')" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs border border-zinc-700">SELECT</button>`;
+    } else {
+      btnHTML = `<button onclick="buyCar('${car.id}')" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-3 py-1.5 rounded-lg text-xs ${money < car.price ? 'opacity-50' : ''}">${money >= car.price ? 'BUY' : 'NO CASH'}</button>`;
+    }
+
+    shop.innerHTML += `
+      <div class="bg-zinc-900 p-3 rounded-2xl border ${isActive ? 'border-yellow-400' : 'border-zinc-800'} flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl bg-zinc-950 p-2 rounded-xl">${car.img}</div>
+          <div>
+            <div class="font-bold text-sm text-white">${car.name}</div>
+            <div class="text-[10px] text-zinc-400">${car.desc}</div>
+            <div class="text-xs text-yellow-400 font-black mt-0.5">R${car.price.toLocaleString()}</div>
+          </div>
+        </div>
+        <div>${btnHTML}</div>
+      </div>
+    `;
+  });
+  saveState();
+}
+
+function buyCar(id) {
+  const car = cars.find(c => c.id === id);
+  if (money >= car.price) {
+    money -= car.price;
+    ownedCarIds.push(car.id);
+    activeCarId = car.id;
+    playCoinChime();
+    updateGarageUI();
+    startGame();
+  } else {
+    alert("Not enough funds! Complete more trips in Pretoria.");
+  }
+}
+
+function selectCar(id) {
+  activeCarId = id;
+  updateGarageUI();
+  startGame();
+}
+
+// GAMEPLAY ENGINE & CANVAS
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+let carX = 200, carY = 260, carAngle = 0;
+let fuel = 100;
+let nitro = 100;
+let currentPassenger = null;
+let currentDrop = null;
+let pendingFare = 0;
+let activeJobText = "Searching for passenger...";
+let animId = null;
+
+let keys = { left: false, right: false };
+
+function startGame() {
+  document.getElementById('garage').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  document.getElementById('canvasContainer').classList.remove('hidden');
+  document.getElementById('controls').classList.remove('hidden');
+
+  const car = cars.find(c => c.id === activeCarId);
+  fuel = 100;
+  nitro = 100;
+  carX = 200; carY = 260; carAngle = 0;
+  
+  updateHUD();
+  spawnTripCandidate();
+  if (animId) cancelAnimationFrame(animId);
+  requestAnimationFrame(gameLoop);
+}
+
+function exitToGarage() {
+  document.getElementById('garage').classList.remove('hidden');
+  document.getElementById('hud').classList.add('hidden');
+  document.getElementById('canvasContainer').classList.add('hidden');
+  document.getElementById('controls').classList.add('hidden');
+  updateGarageUI();
+}
+
+function updateHUD() {
+  document.getElementById('hMoney').innerText = 'R' + money.toLocaleString();
+  document.getElementById('hFuel').innerText = `⛽ ${Math.floor(fuel)}%`;
+  document.getElementById('hJob').innerText = activeJobText;
+}
+
+function spawnTripCandidate() {
+  let pIdx = Math.floor(Math.random() * spots.length);
+  let dIdx = Math.floor(Math.random() * spots.length);
+  while (dIdx === pIdx) dIdx = Math.floor(Math.random() * spots.length);
+
+  currentPassenger = { ...spots[pIdx], picked: false };
+  currentDrop = spots[dIdx];
+  pendingFare = Math.floor(Math.random() * 120 + 130);
+
+  // Trigger Bid Modal
+  document.getElementById('bLocation').innerText = `${currentPassenger.name} ➔ ${currentDrop.name}`;
+  document.getElementById('bSlang').innerText = `"${slangList[Math.floor(Math.random()*slangList.length)]}"`;
+  document.getElementById('bFare').innerText = `R${pendingFare}`;
+  document.getElementById('bidModal').classList.remove('hidden');
+}
+
+function acceptTrip() {
+  document.getElementById('bidModal').classList.add('hidden');
+  activeJobText = `Pick: ${currentPassenger.name}`;
+  updateHUD();
+  playCoinChime();
+}
+
+function counterBid() {
+  if (Math.random() > 0.3) {
+    pendingFare += 30;
+    document.getElementById('bFare').innerText = `R${pendingFare}`;
+    document.getElementById('bSlang').innerText = '"Eish fine, let\'s go!"';
+    setTimeout(acceptTrip, 600);
+  } else {
+    document.getElementById('bSlang').innerText = '"AWA! Too expensive bra!"';
+    setTimeout(declineTrip, 600);
+  }
+}
+
+function declineTrip() {
+  document.getElementById('bidModal').classList.add('hidden');
+  setTimeout(spawnTripCandidate, 1500);
+}
+
+// TOUCH & KEYBOARD CONTROLS
+document.getElementById('btnLeft').addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; });
+document.getElementById('btnLeft').addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; });
+document.getElementById('btnRight').addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; });
+document.getElementById('btnRight').addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; });
+
+window.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') keys.left = true; if (e.key === 'ArrowRight') keys.right = true; });
+window.addEventListener('keyup', e => { if (e.key === 'ArrowLeft') keys.left = false; if (e.key === 'ArrowRight') keys.right = false; });
+
+function triggerNitro() {
+  if (nitro >= 30) {
+    nitro -= 30;
+    const car = cars.find(c => c.id === activeCarId);
+    carX += Math.sin(carAngle) * (car.speed * 8);
+    carY -= Math.cos(carAngle) * (car.speed * 8);
+    playTone(300, 'sawtooth', 0.3, 0.3);
+  }
+}
+
+function watchAdForFuel() {
+  fuel = 100;
+  updateHUD();
+  alert("⛽ Tank Full! Refueled via Ad view.");
+}
+
+// MAIN RENDER LOOP
+function gameLoop() {
+  const car = cars.find(c => c.id === activeCarId);
+
+  // Background Grass
+  ctx.fillStyle = '#1e3a1e';
+  ctx.fillRect(0, 0, 400, 520);
+
+  // Road Network (Pretoria Grid)
+  ctx.fillStyle = '#333';
+  ctx.fillRect(0, 230, 400, 60);
+  ctx.fillRect(170, 0, 60, 520);
+
+  // Road Markings
+  ctx.strokeStyle = '#eab308';
+  ctx.setLineDash([15, 15]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, 260); ctx.lineTo(400, 260);
+  ctx.moveTo(200, 0); ctx.lineTo(200, 520);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Render Landmarks
+  spots.forEach(s => {
+    ctx.fillStyle = '#09090b';
+    ctx.fillRect(s.x - 20, s.y - 20, 40, 40);
+    ctx.strokeStyle = '#27272a';
+    ctx.strokeRect(s.x - 20, s.y - 20, 40, 40);
+    ctx.fillStyle = '#a1a1aa';
+    ctx.font = '9px sans-serif';
+    ctx.fillText(s.name, s.x - 22, s.y - 24);
+  });
+
+  // Render Passenger / Pickup & Drop Dots
+  if (currentPassenger) {
+    let target = currentPassenger.picked ? currentDrop : currentPassenger;
+    ctx.fillStyle = currentPassenger.picked ? '#facc15' : '#22c55e';
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(currentPassenger.picked ? '🎯' : '👤', target.x - 6, target.y + 4);
+  }
+
+  // Steering Physics
+  if (keys.left) carAngle -= 0.07;
+  if (keys.right) carAngle += 0.07;
+
+  carX += Math.sin(carAngle) * car.speed;
+  carY -= Math.cos(carAngle) * car.speed;
+
+  // Boundary Checks
+  if (carX < 10) carX = 390; if (carX > 390) carX = 10;
+  if (carY < 10) carY = 510; if (carY > 510) carY = 10;
+
+  // Fuel consumption
+  fuel -= car.fuelBurn;
+  if (fuel <= 0) fuel = 0;
+  updateHUD();
+
+  // Render Active Car
+  ctx.save();
+  ctx.translate(carX, carY);
+  ctx.rotate(carAngle);
+
+  // Exhaust Pops FX for GTI / BMW
+  if (Math.random() < 0.05 && (car.id === 'gti' || car.id === 'bmw')) {
+    playPopExhaust();
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(-4, 18, 8, 6);
+  }
+
+  // Car Body
+  ctx.fillStyle = car.id === 'bmw' ? '#3b82f6' : car.id === 'gti' ? '#ef4444' : car.id === 'quantum' ? '#f59e0b' : '#ffffff';
+  ctx.fillRect(-12, -18, 24, 36);
+  
+  // Windshield
+  ctx.fillStyle = '#18181b';
+  ctx.fillRect(-10, -10, 20, 10);
+
+  ctx.restore();
+
+  animId = requestAnimationFrame(gameLoop);
+}
+
+// PICKUP / DROP ACTION
+document.getElementById('btnPick').addEventListener('click', () => {
+  if (!currentPassenger) return;
+
+  let target = currentPassenger.picked ? currentDrop : currentPassenger;
+  let dist = Math.hypot(carX - target.x, carY - target.y);
+
+  if (dist < 45) {
+    if (!currentPassenger.picked) {
+      currentPassenger.picked = true;
+      activeJobText = `Drop at: ${currentDrop.name}`;
+      playCoinChime();
+      updateHUD();
+    } else {
+      // Completed Trip
+      money += pendingFare;
+      totalEarnings += pendingFare;
+      tripsCompleted++;
+      saveState();
+
+      document.getElementById('adFareEarned').innerText = `+R${pendingFare} Earned!`;
+      document.getElementById('tripAdOverlay').classList.remove('hidden');
+
+      let cd = 3;
+      let timer = setInterval(() => {
+        cd--;
+        document.getElementById('adCountdown').innerText = cd;
+        if (cd <= 0) {
+          clearInterval(timer);
+          document.getElementById('tripAdOverlay').classList.add('hidden');
+          spawnTripCandidate();
         }
+      }, 1000);
+    }
+  }
+});
 
-        function updateAuthUI() {
-            if (currentUser) {
-                document.getElementById('auth-unlogged-state').classList.add('hidden');
-                document.getElementById('auth-logged-state').classList.remove('hidden');
-                document.getElementById('user-display-email').textContent = currentUser.email;
-                document.getElementById('user-avatar-initial').textContent = currentUser.email.charAt(0).toUpperCase();
-            } else {
-                document.getElementById('auth-unlogged-state').classList.remove('hidden');
-                document.getElementById('auth-logged-state').classList.add('hidden');
-            }
-        }
-
-        function openAuthModal(mode) {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            document.getElementById('auth-error-box').classList.add('hidden');
-            switchAuthMode(mode);
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-
-        function switchAuthMode(mode) {
-            isRegisterMode = mode === 'register';
-            document.getElementById('register-name-field').classList.toggle('hidden', !isRegisterMode);
-            document.getElementById('modal-tab-login').className = isRegisterMode ? "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 transition" : "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition";
-            document.getElementById('modal-tab-register').className = isRegisterMode ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-slate-900 shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-slate-600 transition";
-            document.getElementById('auth-modal-title').textContent = isRegisterMode ? 'Create Mall Account' : 'Mall Account Sign In';
-            document.getElementById('auth-modal-subtitle').textContent = isRegisterMode ? 'Register your email & password to create an account' : 'Sign in using your verified registered account';
-            document.getElementById('auth-submit-btn').textContent = isRegisterMode ? 'Register Account & Enter' : 'Verify & Sign In';
-            document.getElementById('auth-error-box').classList.add('hidden');
-        }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            const fullname = document.getElementById('auth-fullname').value.trim();
-            const errorBox = document.getElementById('auth-error-box');
-
-            let registeredAccounts = JSON.parse(localStorage.getItem('casenova_registered_accounts') || '[]');
-
-            if (isRegisterMode) {
-                if (!email || !password || !fullname) {
-                    showAuthError("Please fill in all fields to create your account.");
-                    return;
-                }
-                const existing = registeredAccounts.find(acc => acc.email === email);
-                if (existing) {
-                    showAuthError("An account with this email already exists! Please Sign In instead.");
-                    return;
-                }
-                const newAcc = { email, password, fullname };
-                registeredAccounts.push(newAcc);
-                localStorage.setItem('casenova_registered_accounts', JSON.stringify(registeredAccounts));
-                
-                currentUser = newAcc;
-                localStorage.setItem('casenova_active_session', JSON.stringify(currentUser));
-                updateAuthUI();
-                closeAuthModal();
-                navigateTo('page2');
-            } else {
-                if (!email || !password) {
-                    showAuthError("Please enter both email and password.");
-                    return;
-                }
-                const found = registeredAccounts.find(acc => acc.email === email && acc.password === password);
-                if (!found) {
-                    showAuthError("Invalid credentials! No verified account found with this email or password. Please Create an Account first.");
-                    return;
-                }
-                currentUser = found;
-                localStorage.setItem('casenova_active_session', JSON.stringify(currentUser));
-                updateAuthUI();
-                closeAuthModal();
-                navigateTo('page2');
-            }
-        }
-
-        function showAuthError(msg) {
-            const box = document.getElementById('auth-error-box');
-            box.textContent = msg;
-            box.classList.remove('hidden');
-        }
-
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem('casenova_active_session');
-            updateAuthUI();
-            navigateTo('page1');
-        }
-
-        function checkAuthAndNavigate(pageId) {
-            if (!currentUser) {
-                openAuthModal('login');
-                return;
-            }
-            navigateTo(pageId);
-        }
-
-        function navigateTo(pageId, recordHistory = true) {
-            if (recordHistory && pageHistory[pageHistory.length - 1] !== pageId) {
-                pageHistory.push(pageId);
-            }
-
-            ['page1', 'page2', 'page3', 'page4', 'page4b', 'page5'].forEach(p => {
-                const sec = document.getElementById(p);
-                if (sec) sec.classList.toggle('hidden', p !== pageId);
-            });
-
-            const backBar = document.getElementById('global-back-bar');
-            if (backBar) {
-                backBar.classList.toggle('hidden', pageId === 'page1');
-            }
-
-            const labels = {
-                'page1': 'Gateway',
-                'page2': 'Mall Hub',
-                'page3': 'Bursaries Catalog',
-                'page4': 'Institutions Directory',
-                'page4b': 'APS Workspace',
-                'page5': 'Redirect Portal'
-            };
-            const labelEl = document.getElementById('nav-current-label');
-            if (labelEl) labelEl.textContent = labels[pageId] || 'Mall';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function goBack() {
-            if (pageHistory.length > 1) {
-                pageHistory.pop();
-                const previousPage = pageHistory[pageHistory.length - 1];
-                navigateTo(previousPage, false);
-            } else {
-                navigateTo('page1', false);
-            }
-        }
-
-        function openInstitutionCategory(type) {
-            if (!currentUser) {
-                openAuthModal('login');
-                return;
-            }
-            activeDirectoryType = type;
-            switchDirectoryTab(type);
-            navigateTo('page4');
-        }
-
-        function switchDirectoryTab(type) {
-            activeDirectoryType = type;
-            const titleEl = document.getElementById('directory-page-title');
-            const uniBtn = document.getElementById('dir-tab-uni');
-            const colBtn = document.getElementById('dir-tab-college');
-
-            if (type === 'university') {
-                titleEl.textContent = 'All Public Universities Directory';
-                uniBtn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition";
-                colBtn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
-            } else {
-                titleEl.textContent = 'All Public & Private Colleges Directory';
-                colBtn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white transition";
-                uniBtn.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
-            }
-            renderDirectory(type);
-        }
-
-        function renderDirectory(type) {
-            const grid = document.getElementById('directory-grid');
-            grid.innerHTML = '';
-
-            const list = type === 'university' ? INSTITUTIONS.universities : INSTITUTIONS.colleges;
-
-            list.forEach(inst => {
-                const isOpen = inst.status === 'Open';
-                const card = document.createElement('div');
-                card.className = "bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-brand-500 transition shadow-sm";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-brand-100 text-brand-800">${inst.type}</span>
-                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${isOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">${inst.status}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-sm mb-1">${inst.name}</h3>
-                        <span class="text-xs text-slate-500 block mb-1"><i class="fa-solid fa-location-dot mr-1"></i>${inst.location}</span>
-                        <span class="text-xs text-slate-500 block mb-3">Min APS Required: <strong>${inst.apsMin}</strong></span>
-                    </div>
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="openInstitutionWorkspace('${inst.id}')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
-                            APS & Prospectus ↗
-                        </button>
-                        <a href="${inst.applyUrl}" target="_blank" onclick="trackRedirect('${inst.name}')" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
-                            Apply Now ↗
-                        </a>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function openInstitutionWorkspace(instId) {
-            const all = [...INSTITUTIONS.universities, ...INSTITUTIONS.colleges];
-            currentSelectedInstitution = all.find(i => i.id === instId);
-            if (!currentSelectedInstitution) return;
-
-            document.getElementById('ws-inst-name').textContent = currentSelectedInstitution.name;
-            document.getElementById('ws-inst-loc').textContent = currentSelectedInstitution.location;
-            document.getElementById('ws-inst-aps').textContent = currentSelectedInstitution.apsMin;
-            
-            const statusEl = document.getElementById('ws-inst-status');
-            statusEl.textContent = currentSelectedInstitution.status;
-            statusEl.className = currentSelectedInstitution.status === 'Open' ? 'bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full' : 'bg-red-100 text-red-800 font-bold text-xs px-3 py-1 rounded-full';
-
-            document.getElementById('ws-prospectus-btn').href = currentSelectedInstitution.prospectus;
-            document.getElementById('ws-apply-btn').href = currentSelectedInstitution.applyUrl;
-
-            document.querySelectorAll('.aps-score-input, .aps-lo-input').forEach(i => i.value = '');
-            document.getElementById('total-aps-display').textContent = '0';
-            const badge = document.getElementById('aps-eligibility-badge');
-            badge.textContent = 'Enter Marks';
-            badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-slate-700 text-slate-200';
-
-            navigateTo('page4b');
-        }
-
-        function calculateAPS() {
-            const scoreInputs = document.querySelectorAll('.aps-score-input');
-            let totalScore = 0;
-
-            scoreInputs.forEach(input => {
-                const val = parseFloat(input.value);
-                if (!isNaN(val) && val > 0) {
-                    if (val >= 80) totalScore += 7;
-                    else if (val >= 70) totalScore += 6;
-                    else if (val >= 60) totalScore += 5;
-                    else if (val >= 50) totalScore += 4;
-                    else if (val >= 40) totalScore += 3;
-                    else if (val >= 30) totalScore += 2;
-                    else totalScore += 1;
-                }
-            });
-
-            calculatedAPS = totalScore;
-            document.getElementById('total-aps-display').textContent = totalScore;
-
-            const badge = document.getElementById('aps-eligibility-badge');
-            if (currentSelectedInstitution) {
-                if (totalScore >= currentSelectedInstitution.apsMin) {
-                    badge.textContent = 'Eligible for Admission!';
-                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500 text-slate-950';
-                } else {
-                    badge.textContent = `Below Min APS (${currentSelectedInstitution.apsMin})`;
-                    badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-slate-950';
-                }
-            }
-        }
-
-        function trackRedirect(instName) {
-            document.getElementById('redirect-inst-name').textContent = instName;
-            const all = [...INSTITUTIONS.universities, ...INSTITUTIONS.colleges, ...BURSARIES_CATALOG];
-            const found = all.find(i => i.name === instName);
-            if (found) {
-                document.getElementById('final-redirect-link').href = found.applyUrl || found.link;
-            }
-        }
-
-        function renderCatalog(filter) {
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
-
-            let list = filter === 'all' ? BURSARIES_CATALOG : BURSARIES_CATALOG.filter(b => b.category === filter);
-
-            list.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between hover:border-brand-500 transition shadow-sm";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${item.category === 'international' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'}">${item.category}</span>
-                            <span class="text-xs font-semibold text-slate-500">${item.provider}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1">${item.name}</h3>
-                        <span class="text-xs font-bold text-brand-700 block mb-2">${item.amount}</span>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">${item.desc}</p>
-                    </div>
-                    <a href="${item.link}" target="_blank" onclick="trackRedirect('${item.name}')" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-sm">
-                        Apply on Official Portal ↗
-                    </a>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function filterCatalog(category) {
-            ['all', 'government', 'seta', 'corporate', 'international'].forEach(c => {
-                const btn = document.getElementById(`cat-btn-${c}`);
-                if (btn) btn.className = c === category ? "px-4 py-2 rounded-xl text-xs font-bold bg-brand-700 text-white shadow-sm" : "px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
-            });
-            renderCatalog(category);
-        }
-
-        function searchCatalog() {
-            const query = document.getElementById('catalog-search').value.toLowerCase();
-            const grid = document.getElementById('catalog-grid');
-            grid.innerHTML = '';
-
-            const filtered = BURSARIES_CATALOG.filter(b => 
-                b.name.toLowerCase().includes(query) || 
-                b.desc.toLowerCase().includes(query) || 
-                b.provider.toLowerCase().includes(query)
-            );
-
-            filtered.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between shadow-sm";
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">${item.category}</span>
-                            <span class="text-xs font-semibold text-slate-500">${item.provider}</span>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1">${item.name}</h3>
-                        <span class="text-xs font-bold text-brand-700 block mb-2">${item.amount}</span>
-                        <p class="text-xs text-slate-600 leading-relaxed mb-4">${item.desc}</p>
-                    </div>
-                    <a href="${item.link}" target="_blank" onclick="trackRedirect('${item.name}')" class="block w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
-                        Apply on Official Portal ↗
-                    </a>
-                `;
-                grid.appendChild(card);
-            });
-        }
-    </script>
+// INITIALIZE ON LOAD
+updateGarageUI();
+</script>
 </body>
 </html>
