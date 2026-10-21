@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Casenova InDrives - Pretoria Edition</title>
+<title>Casenova InDrives - Pretoria 3D</title>
+
+<!-- Google AdSense -->
 <meta name="google-adsense-account" content="ca-pub-8539625352833164">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8539625352833164" crossorigin="anonymous"></script>
+
+<!-- Embedded Web App Manifest for PWA / PWABuilder APK -->
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkNhc2Vub3ZhIEluRHJpdmVzIC0gUHJldG9yaWEgM0QiLAogICJzaG9ydF9uYW1lIjogIkluRHJpdmVzIFBUQSIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzA5MDkwYiIsCiAgInRoZW1lX2NvbG9yIjogIiNmYWNjMTUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBISjFjbVJzWjNWcGJHbHVaeUJtYVd4bEBUR0psYVd4cGJuTTlhVzVqYkdWa1BEeHpjSEFnWVhKMGNuaGZjRzkxZEM1d2JHRnpaWFFpUGp4emNEeDpjMm4rQ2k0K0NpNCsiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbHkgbWFza2FibGUiCiAgICB9CiAgXQp9">
+
+<!-- Tailwind CSS & Three.js CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <style>
   * { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
   body { margin: 0; background: #09090b; color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
-  canvas { display: block; background: #1b381e; }
+  #webgl-canvas { width: 100vw; height: 100vh; display: block; }
   .pulse-anim { animation: pulse 1.5s infinite; }
   @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 </style>
@@ -24,7 +33,7 @@
       <div>
         <h1 class="text-3xl font-black tracking-tight text-white">CASENOVA</h1>
         <div class="text-yellow-400 font-extrabold text-xl tracking-wide flex items-center gap-1">
-          INDRIVES <span class="bg-yellow-400 text-black text-[10px] px-1.5 py-0.5 rounded font-black tracking-normal">PTA</span>
+          INDRIVES <span class="bg-yellow-400 text-black text-[10px] px-1.5 py-0.5 rounded font-black tracking-normal">PTA 3D</span>
         </div>
       </div>
       <div class="text-right">
@@ -49,13 +58,13 @@
       </div>
     </div>
 
-    <!-- Sound Toggle -->
+    <!-- Audio Toggle -->
     <div class="flex justify-between items-center bg-zinc-900 p-2.5 rounded-xl border border-zinc-800 my-2 text-xs">
-      <span class="font-bold">🔊 Web Audio Synth FX</span>
+      <span class="font-bold">🔊 Web Audio Engine FX</span>
       <button onclick="toggleAudio()" id="audioBtn" class="bg-yellow-400 text-black font-black px-3 py-1 rounded-lg">ENABLED</button>
     </div>
 
-    <h2 class="text-sm font-bold text-zinc-400 mt-4 mb-2">PRETORIA FLEET - BUY & UPGRADE</h2>
+    <h2 class="text-sm font-bold text-zinc-400 mt-4 mb-2">PRETORIA FLEET - BUY & DRIVE</h2>
     <div id="shopList" class="space-y-3 mb-4"></div>
   </div>
 
@@ -76,9 +85,13 @@
       <div id="hJob" class="text-[10px] text-yellow-400 font-semibold truncate max-w-[130px]">Searching for trip...</div>
     </div>
   </div>
-  <div class="text-right">
-    <div id="hFuel" class="font-bold text-white">⛽ 100%</div>
-    <div id="hNitro" class="text-[10px] text-cyan-400 font-bold">⚡ NITRO READY</div>
+  <div class="flex items-center gap-2">
+    <!-- Camera Switcher -->
+    <button onclick="cycleCameraView()" class="bg-yellow-400 text-black p-2 rounded-lg font-black text-xs">📹 <span id="camName">CHASE</span></button>
+    <div class="text-right">
+      <div id="hFuel" class="font-bold text-white">⛽ 100%</div>
+      <div id="hNitro" class="text-[10px] text-cyan-400 font-bold">⚡ NITRO READY</div>
+    </div>
   </div>
 </div>
 
@@ -97,9 +110,9 @@
   </div>
 </div>
 
-<!-- MAIN CANVAS ENGINE -->
-<div id="canvasContainer" class="hidden relative flex-1 flex justify-center items-center">
-  <canvas id="c" width="400" height="520" class="w-full max-w-md h-full object-contain"></canvas>
+<!-- 3D CANVAS CONTAINER -->
+<div id="canvasContainer" class="hidden relative flex-1 w-full h-full">
+  <canvas id="webgl-canvas"></canvas>
   
   <!-- TRIP FINISHED AD OVERLAY -->
   <div id="tripAdOverlay" class="hidden absolute inset-0 bg-black/90 z-40 flex flex-col justify-center items-center p-4 text-center">
@@ -128,39 +141,49 @@
 </div>
 
 <script>
-// PERSISTENT STATE & STORAGE
+// REGISTER SERVICE WORKER VIA BLOB URL (PWA & OFFLINE FAST LOADS)
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = 'indrives-v1';
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./']))));
+    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+  `;
+  const blob = new Blob([swCode], { type: 'text/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+
+// PERSISTENT GAME DATA
 let money = parseInt(localStorage.getItem('indrive_money')) || 100000;
 let tripsCompleted = parseInt(localStorage.getItem('indrive_trips')) || 0;
 let totalEarnings = parseInt(localStorage.getItem('indrive_earnings')) || 0;
 let ownedCarIds = JSON.parse(localStorage.getItem('indrive_owned')) || ['corolla'];
 let activeCarId = localStorage.getItem('indrive_active') || 'corolla';
-let upgrades = JSON.parse(localStorage.getItem('indrive_upgrades')) || { speed: 1, fuel: 1 };
 let audioEnabled = true;
 
 const cars = [
-  { id: 'corolla', name: 'Toyota Corolla 2008', price: 75000, speed: 3.2, fuelBurn: 0.015, img: '🚗', desc: 'Reliable kasi workhorse. Low fuel burn.' },
-  { id: 'polo', name: 'VW Polo Vivo', price: 95000, speed: 4.2, fuelBurn: 0.02, img: '🚙', desc: 'Agile & fast through Pretoria traffic.' },
-  { id: 'quantum', name: 'Toyota Quantum Siyaya', price: 120000, speed: 2.8, fuelBurn: 0.025, img: '🚐', desc: 'Carry multi-passengers for double fares!' },
-  { id: 'bmw', name: 'BMW 320i E30 Gusheshe', price: 150000, speed: 5.5, fuelBurn: 0.035, img: '🏎️', desc: 'Kasi legend. Rapid acceleration & pops.' },
-  { id: 'gti', name: 'Golf 7 GTI Vrr Pha', price: 180000, speed: 5.8, fuelBurn: 0.038, img: '🏎️', desc: 'Exhaust pops & high passenger tips!' },
-  { id: 'benz', name: 'Mercedes V-Class VIP', price: 250000, speed: 4.8, fuelBurn: 0.022, img: '🚘', desc: 'VIP InDrive trips with massive payouts.' }
+  { id: 'corolla', name: 'Toyota Corolla 2008', price: 75000, speed: 0.8, fuelBurn: 0.015, color: 0xffffff, img: '🚗', desc: 'Reliable kasi workhorse. Low fuel burn.' },
+  { id: 'polo', name: 'VW Polo Vivo', price: 95000, speed: 1.1, fuelBurn: 0.02, color: 0x3b82f6, img: '🚙', desc: 'Agile & fast through Pretoria traffic.' },
+  { id: 'quantum', name: 'Toyota Quantum Siyaya', price: 120000, speed: 0.7, fuelBurn: 0.025, color: 0xf59e0b, img: '🚐', desc: 'Carry multi-passengers for double fares!' },
+  { id: 'bmw', name: 'BMW 320i E30 Gusheshe', price: 150000, speed: 1.4, fuelBurn: 0.035, color: 0x2563eb, img: '🏎️', desc: 'Kasi legend. Rapid acceleration & pops.' },
+  { id: 'gti', name: 'Golf 7 GTI Vrr Pha', price: 180000, speed: 1.5, fuelBurn: 0.038, color: 0xef4444, img: '🏎️', desc: 'Exhaust pops & high passenger tips!' },
+  { id: 'benz', name: 'Mercedes V-Class VIP', price: 250000, speed: 1.2, fuelBurn: 0.022, color: 0x18181b, img: '🚘', desc: 'VIP InDrive trips with massive payouts.' }
 ];
 
 const spots = [
-  { x: 60, y: 80, name: 'Church Square' },
-  { x: 340, y: 90, name: 'Loftus Versfeld' },
-  { x: 80, y: 320, name: 'Sunnyside' },
-  { x: 320, y: 340, name: 'Hatfield Gautrain' },
-  { x: 200, y: 180, name: 'Pretoria CBD' },
-  { x: 300, y: 460, name: 'Menlyn Park' },
-  { x: 80, y: 460, name: 'Union Buildings' }
+  { x: -80, z: -80, name: 'Church Square' },
+  { x: 80, z: -80, name: 'Loftus Versfeld' },
+  { x: -80, z: 80, name: 'Sunnyside' },
+  { x: 80, z: 80, name: 'Hatfield Gautrain' },
+  { x: 0, z: 0, name: 'Pretoria CBD' },
+  { x: 120, z: 120, name: 'Menlyn Park' },
+  { x: -120, z: 120, name: 'Union Buildings' }
 ];
 
 const slangList = [
   "Eish bra, take me quickly!", "Dankie ntwan'a!", "O kae gauta?", "Pretoria West broer!", "Sharp sharp captain!"
 ];
 
-// WEB AUDIO API SYNTHESIZER
+// WEB AUDIO SYNTHESIZER
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -206,14 +229,13 @@ function toggleAudio() {
   document.getElementById('audioBtn').className = audioEnabled ? 'bg-yellow-400 text-black font-black px-3 py-1 rounded-lg' : 'bg-zinc-800 text-zinc-400 font-bold px-3 py-1 rounded-lg';
 }
 
-// GARAGE & SHOP RENDERER
+// GARAGE & SHOP SYSTEM
 function saveState() {
   localStorage.setItem('indrive_money', money);
   localStorage.setItem('indrive_trips', tripsCompleted);
   localStorage.setItem('indrive_earnings', totalEarnings);
   localStorage.setItem('indrive_owned', JSON.stringify(ownedCarIds));
   localStorage.setItem('indrive_active', activeCarId);
-  localStorage.setItem('indrive_upgrades', JSON.stringify(upgrades));
 }
 
 function updateGarageUI() {
@@ -264,7 +286,7 @@ function buyCar(id) {
     updateGarageUI();
     startGame();
   } else {
-    alert("Not enough funds! Complete more trips in Pretoria.");
+    alert("Not enough cash! Complete more trips in Pretoria.");
   }
 }
 
@@ -274,20 +296,118 @@ function selectCar(id) {
   startGame();
 }
 
-// GAMEPLAY ENGINE & CANVAS
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
+// THREE.JS 3D ENGINE & CAMERA SYSTEM
+let scene, camera, renderer;
+let carMesh, pMarkerMesh, dMarkerMesh;
+let cameraMode = 0; // 0: Chase, 1: Cockpit, 2: Top-Down
+const cameraModeNames = ["CHASE", "COCKPIT", "TOP-DOWN"];
 
-let carX = 200, carY = 260, carAngle = 0;
-let fuel = 100;
-let nitro = 100;
-let currentPassenger = null;
-let currentDrop = null;
-let pendingFare = 0;
-let activeJobText = "Searching for passenger...";
+let carPosX = 0, carPosZ = 0, carRotY = 0, currentSpeed = 0;
+let fuel = 100, nitro = 100;
+let currentPassenger = null, currentDrop = null, pendingFare = 0;
+let activeJobText = "Searching for trip...";
 let animId = null;
 
 let keys = { left: false, right: false };
+
+function init3DScene() {
+  const container = document.getElementById('canvasContainer');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x18181b);
+  scene.fog = new THREE.FogExp2(0x18181b, 0.005);
+
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
+
+  const dirLight = new THREE.DirectionalLight(0xfef08a, 0.8);
+  dirLight.position.set(50, 100, 50);
+  scene.add(dirLight);
+
+  // Ground / Roads
+  const groundGeo = new THREE.PlaneGeometry(600, 600);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x14532d });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  scene.add(ground);
+
+  // Roads Grid
+  const roadMat = new THREE.MeshLambertMaterial({ color: 0x27272a });
+  for (let i = -200; i <= 200; i += 80) {
+    const rGeoH = new THREE.PlaneGeometry(600, 12);
+    const rMeshH = new THREE.Mesh(rGeoH, roadMat);
+    rMeshH.rotation.x = -Math.PI / 2;
+    rMeshH.position.set(0, 0.1, i);
+    scene.add(rMeshH);
+
+    const rGeoV = new THREE.PlaneGeometry(12, 600);
+    const rMeshV = new THREE.Mesh(rGeoV, roadMat);
+    rMeshV.rotation.x = -Math.PI / 2;
+    rMeshV.position.set(i, 0.1, 0);
+    scene.add(rMeshV);
+  }
+
+  // Pretoria Landmarks & Buildings
+  spots.forEach(s => {
+    const bGeo = new THREE.BoxGeometry(24, 30, 24);
+    const bMat = new THREE.MeshLambertMaterial({ color: 0x3f3f46 });
+    const bMesh = new THREE.Mesh(bGeo, bMat);
+    bMesh.position.set(s.x, 15, s.z);
+    scene.add(bMesh);
+  });
+
+  // Pickup & Drop Markers
+  const pGeo = new THREE.CylinderGeometry(4, 4, 1, 16);
+  pMarkerMesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: 0x22c55e }));
+  pMarkerMesh.position.set(0, -10, 0);
+  scene.add(pMarkerMesh);
+
+  dMarkerMesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
+  dMarkerMesh.position.set(0, -10, 0);
+  scene.add(dMarkerMesh);
+
+  buildCarMesh();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
+function buildCarMesh() {
+  if (carMesh) scene.remove(carMesh);
+
+  const carData = cars.find(c => c.id === activeCarId);
+  carMesh = new THREE.Group();
+
+  // Body
+  const bodyGeo = new THREE.BoxGeometry(2.4, 1.4, 4.5);
+  const bodyMat = new THREE.MeshLambertMaterial({ color: carData.color });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 1;
+  carMesh.add(body);
+
+  // Roof / Cabin
+  const cabinGeo = new THREE.BoxGeometry(2.1, 1.0, 2.4);
+  const cabinMat = new THREE.MeshLambertMaterial({ color: 0x18181b });
+  const cabin = new THREE.Mesh(cabinGeo, cabinMat);
+  cabin.position.set(0, 2.0, -0.3);
+  carMesh.add(cabin);
+
+  scene.add(carMesh);
+}
+
+function cycleCameraView() {
+  cameraMode = (cameraMode + 1) % 3;
+  document.getElementById('camName').innerText = cameraModeNames[cameraMode];
+}
 
 function startGame() {
   document.getElementById('garage').classList.add('hidden');
@@ -295,15 +415,17 @@ function startGame() {
   document.getElementById('canvasContainer').classList.remove('hidden');
   document.getElementById('controls').classList.remove('hidden');
 
-  const car = cars.find(c => c.id === activeCarId);
-  fuel = 100;
-  nitro = 100;
-  carX = 200; carY = 260; carAngle = 0;
-  
+  if (!scene) init3DScene();
+  buildCarMesh();
+
+  fuel = 100; nitro = 100;
+  carPosX = 0; carPosZ = 0; carRotY = 0;
+
   updateHUD();
   spawnTripCandidate();
+
   if (animId) cancelAnimationFrame(animId);
-  requestAnimationFrame(gameLoop);
+  animate();
 }
 
 function exitToGarage() {
@@ -329,7 +451,9 @@ function spawnTripCandidate() {
   currentDrop = spots[dIdx];
   pendingFare = Math.floor(Math.random() * 120 + 130);
 
-  // Trigger Bid Modal
+  pMarkerMesh.position.set(currentPassenger.x, 0.5, currentPassenger.z);
+  dMarkerMesh.position.set(0, -10, 0);
+
   document.getElementById('bLocation').innerText = `${currentPassenger.name} ➔ ${currentDrop.name}`;
   document.getElementById('bSlang').innerText = `"${slangList[Math.floor(Math.random()*slangList.length)]}"`;
   document.getElementById('bFare').innerText = `R${pendingFare}`;
@@ -360,7 +484,7 @@ function declineTrip() {
   setTimeout(spawnTripCandidate, 1500);
 }
 
-// TOUCH & KEYBOARD CONTROLS
+// TOUCH CONTROLS
 document.getElementById('btnLeft').addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; });
 document.getElementById('btnLeft').addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; });
 document.getElementById('btnRight').addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; });
@@ -372,9 +496,9 @@ window.addEventListener('keyup', e => { if (e.key === 'ArrowLeft') keys.left = f
 function triggerNitro() {
   if (nitro >= 30) {
     nitro -= 30;
-    const car = cars.find(c => c.id === activeCarId);
-    carX += Math.sin(carAngle) * (car.speed * 8);
-    carY -= Math.cos(carAngle) * (car.speed * 8);
+    const carData = cars.find(c => c.id === activeCarId);
+    carPosX += Math.sin(carRotY) * (carData.speed * 15);
+    carPosZ += Math.cos(carRotY) * (carData.speed * 15);
     playTone(300, 'sawtooth', 0.3, 0.3);
   }
 }
@@ -385,91 +509,49 @@ function watchAdForFuel() {
   alert("⛽ Tank Full! Refueled via Ad view.");
 }
 
-// MAIN RENDER LOOP
-function gameLoop() {
-  const car = cars.find(c => c.id === activeCarId);
+// 3D ANIMATION LOOP
+function animate() {
+  const carData = cars.find(c => c.id === activeCarId);
 
-  // Background Grass
-  ctx.fillStyle = '#1e3a1e';
-  ctx.fillRect(0, 0, 400, 520);
+  // Steering & Movement
+  if (keys.left) carRotY += 0.04;
+  if (keys.right) carRotY -= 0.04;
 
-  // Road Network (Pretoria Grid)
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, 230, 400, 60);
-  ctx.fillRect(170, 0, 60, 520);
+  currentSpeed = carData.speed;
+  carPosX += Math.sin(carRotY) * currentSpeed;
+  carPosZ += Math.cos(carRotY) * currentSpeed;
 
-  // Road Markings
-  ctx.strokeStyle = '#eab308';
-  ctx.setLineDash([15, 15]);
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, 260); ctx.lineTo(400, 260);
-  ctx.moveTo(200, 0); ctx.lineTo(200, 520);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  carMesh.position.set(carPosX, 0, carPosZ);
+  carMesh.rotation.y = carRotY;
 
-  // Render Landmarks
-  spots.forEach(s => {
-    ctx.fillStyle = '#09090b';
-    ctx.fillRect(s.x - 20, s.y - 20, 40, 40);
-    ctx.strokeStyle = '#27272a';
-    ctx.strokeRect(s.x - 20, s.y - 20, 40, 40);
-    ctx.fillStyle = '#a1a1aa';
-    ctx.font = '9px sans-serif';
-    ctx.fillText(s.name, s.x - 22, s.y - 24);
-  });
-
-  // Render Passenger / Pickup & Drop Dots
-  if (currentPassenger) {
-    let target = currentPassenger.picked ? currentDrop : currentPassenger;
-    ctx.fillStyle = currentPassenger.picked ? '#facc15' : '#22c55e';
-    ctx.beginPath();
-    ctx.arc(target.x, target.y, 12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#000';
-    ctx.font = '10px sans-serif';
-    ctx.fillText(currentPassenger.picked ? '🎯' : '👤', target.x - 6, target.y + 4);
-  }
-
-  // Steering Physics
-  if (keys.left) carAngle -= 0.07;
-  if (keys.right) carAngle += 0.07;
-
-  carX += Math.sin(carAngle) * car.speed;
-  carY -= Math.cos(carAngle) * car.speed;
-
-  // Boundary Checks
-  if (carX < 10) carX = 390; if (carX > 390) carX = 10;
-  if (carY < 10) carY = 510; if (carY > 510) carY = 10;
-
-  // Fuel consumption
-  fuel -= car.fuelBurn;
+  // Fuel depletion
+  fuel -= carData.fuelBurn;
   if (fuel <= 0) fuel = 0;
   updateHUD();
 
-  // Render Active Car
-  ctx.save();
-  ctx.translate(carX, carY);
-  ctx.rotate(carAngle);
-
-  // Exhaust Pops FX for GTI / BMW
-  if (Math.random() < 0.05 && (car.id === 'gti' || car.id === 'bmw')) {
+  // Exhaust pops sound for GTI / BMW
+  if (Math.random() < 0.03 && (carData.id === 'gti' || carData.id === 'bmw')) {
     playPopExhaust();
-    ctx.fillStyle = '#f97316';
-    ctx.fillRect(-4, 18, 8, 6);
   }
 
-  // Car Body
-  ctx.fillStyle = car.id === 'bmw' ? '#3b82f6' : car.id === 'gti' ? '#ef4444' : car.id === 'quantum' ? '#f59e0b' : '#ffffff';
-  ctx.fillRect(-12, -18, 24, 36);
-  
-  // Windshield
-  ctx.fillStyle = '#18181b';
-  ctx.fillRect(-10, -10, 20, 10);
+  // Camera Management
+  if (cameraMode === 0) { // Chase
+    camera.position.x = carPosX - Math.sin(carRotY) * 16;
+    camera.position.y = 8;
+    camera.position.z = carPosZ - Math.cos(carRotY) * 16;
+    camera.lookAt(carPosX, 2, carPosZ);
+  } else if (cameraMode === 1) { // Cockpit
+    camera.position.x = carPosX + Math.sin(carRotY) * 0.2;
+    camera.position.y = 2.2;
+    camera.position.z = carPosZ + Math.cos(carRotY) * 0.2;
+    camera.lookAt(carPosX + Math.sin(carRotY) * 20, 2, carPosZ + Math.cos(carRotY) * 20);
+  } else { // Top-Down
+    camera.position.set(carPosX, 60, carPosZ);
+    camera.lookAt(carPosX, 0, carPosZ);
+  }
 
-  ctx.restore();
-
-  animId = requestAnimationFrame(gameLoop);
+  renderer.render(scene, camera);
+  animId = requestAnimationFrame(animate);
 }
 
 // PICKUP / DROP ACTION
@@ -477,12 +559,14 @@ document.getElementById('btnPick').addEventListener('click', () => {
   if (!currentPassenger) return;
 
   let target = currentPassenger.picked ? currentDrop : currentPassenger;
-  let dist = Math.hypot(carX - target.x, carY - target.y);
+  let dist = Math.hypot(carPosX - target.x, carPosZ - target.z);
 
-  if (dist < 45) {
+  if (dist < 15) {
     if (!currentPassenger.picked) {
       currentPassenger.picked = true;
       activeJobText = `Drop at: ${currentDrop.name}`;
+      pMarkerMesh.position.set(0, -10, 0);
+      dMarkerMesh.position.set(currentDrop.x, 0.5, currentDrop.z);
       playCoinChime();
       updateHUD();
     } else {
@@ -492,6 +576,7 @@ document.getElementById('btnPick').addEventListener('click', () => {
       tripsCompleted++;
       saveState();
 
+      dMarkerMesh.position.set(0, -10, 0);
       document.getElementById('adFareEarned').innerText = `+R${pendingFare} Earned!`;
       document.getElementById('tripAdOverlay').classList.remove('hidden');
 
