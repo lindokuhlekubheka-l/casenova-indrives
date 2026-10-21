@@ -1,601 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Casenova InDrives - Pretoria 3D</title>
-
-<!-- Google AdSense -->
-<meta name="google-adsense-account" content="ca-pub-8539625352833164">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8539625352833164" crossorigin="anonymous"></script>
-
-<!-- Embedded Web App Manifest for PWA / PWABuilder APK -->
-<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIkNhc2Vub3ZhIEluRHJpdmVzIC0gUHJldG9yaWEgM0QiLAogICJzaG9ydF9uYW1lIjogIkluRHJpdmVzIFBUQSIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzA5MDkwYiIsCiAgInRoZW1lX2NvbG9yIjogIiNmYWNjMTUiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBISjFjbVJzWjNWcGJHbHVaeUJtYVd4bEBUR0psYVd4cGJuTTlhVzVqYkdWa1BEeHpjSEFnWVhKMGNuaGZjRzkxZEM1d2JHRnpaWFFpUGp4emNEeDpjMm4rQ2k0K0NpNCsiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiLAogICAgICAicHVycG9zZSI6ICJhbHkgbWFza2FibGUiCiAgICB9CiAgXQp9">
-
-<!-- Tailwind CSS & Three.js CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-<style>
-  * { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
-  body { margin: 0; background: #09090b; color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
-  #webgl-canvas { width: 100vw; height: 100vh; display: block; }
-  .pulse-anim { animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-</style>
-</head>
-<body class="bg-zinc-950 text-white flex flex-col h-screen justify-between">
-
-<!-- GARAGE SCREEN -->
-<div id="garage" class="fixed inset-0 z-50 bg-zinc-950 overflow-y-auto p-4 max-w-md mx-auto flex flex-col justify-between">
-  <div>
-    <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-      <div>
-        <h1 class="text-3xl font-black tracking-tight text-white">CASENOVA</h1>
-        <div class="text-yellow-400 font-extrabold text-xl tracking-wide flex items-center gap-1">
-          INDRIVES <span class="bg-yellow-400 text-black text-[10px] px-1.5 py-0.5 rounded font-black tracking-normal">PTA 3D</span>
-        </div>
-      </div>
-      <div class="text-right">
-        <div class="text-xs text-zinc-400 font-semibold">CASH BALANCE</div>
-        <div id="moneyDisplay" class="text-2xl font-black text-green-400">R100,000</div>
-      </div>
-    </div>
-
-    <!-- Stats & Options -->
-    <div class="grid grid-cols-3 gap-2 my-3 text-center text-xs">
-      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
-        <div class="text-zinc-400 text-[10px]">TRIPS</div>
-        <div id="statTrips" class="font-bold text-sm text-yellow-400">0</div>
-      </div>
-      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
-        <div class="text-zinc-400 text-[10px]">EARNINGS</div>
-        <div id="statEarnings" class="font-bold text-sm text-green-400">R0</div>
-      </div>
-      <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800">
-        <div class="text-zinc-400 text-[10px]">RATING</div>
-        <div id="statRating" class="font-bold text-sm text-yellow-400">5.0 ⭐</div>
-      </div>
-    </div>
-
-    <!-- Audio Toggle -->
-    <div class="flex justify-between items-center bg-zinc-900 p-2.5 rounded-xl border border-zinc-800 my-2 text-xs">
-      <span class="font-bold">🔊 Web Audio Engine FX</span>
-      <button onclick="toggleAudio()" id="audioBtn" class="bg-yellow-400 text-black font-black px-3 py-1 rounded-lg">ENABLED</button>
-    </div>
-
-    <h2 class="text-sm font-bold text-zinc-400 mt-4 mb-2">PRETORIA FLEET - BUY & DRIVE</h2>
-    <div id="shopList" class="space-y-3 mb-4"></div>
-  </div>
-
-  <!-- Ad Banner -->
-  <div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800 text-center my-2">
-    <span class="text-[9px] text-zinc-500 font-bold block mb-1">SPONSORED ADVERTISEMENT</span>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8539625352833164" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-  </div>
-</div>
-
-<!-- DRIVING SCREEN HUD -->
-<div id="hud" class="hidden fixed top-0 left-0 right-0 z-40 bg-zinc-900/90 backdrop-blur border-b border-zinc-800 p-2 text-xs max-w-md mx-auto flex justify-between items-center">
-  <div class="flex items-center gap-2">
-    <button onclick="exitToGarage()" class="bg-zinc-800 p-2 rounded-lg font-bold text-zinc-300">⬅️ Garage</button>
-    <div>
-      <div id="hMoney" class="font-black text-green-400 text-sm">R100,000</div>
-      <div id="hJob" class="text-[10px] text-yellow-400 font-semibold truncate max-w-[130px]">Searching for trip...</div>
-    </div>
-  </div>
-  <div class="flex items-center gap-2">
-    <!-- Camera Switcher -->
-    <button onclick="cycleCameraView()" class="bg-yellow-400 text-black p-2 rounded-lg font-black text-xs">📹 <span id="camName">CHASE</span></button>
-    <div class="text-right">
-      <div id="hFuel" class="font-bold text-white">⛽ 100%</div>
-      <div id="hNitro" class="text-[10px] text-cyan-400 font-bold">⚡ NITRO READY</div>
-    </div>
-  </div>
-</div>
-
-<!-- BIDDING POPUP MODAL -->
-<div id="bidModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-  <div class="bg-zinc-900 border border-yellow-400/40 p-5 rounded-2xl max-w-xs w-full text-center space-y-3">
-    <div class="text-3xl" id="bAvatar">👤</div>
-    <div class="text-xs text-yellow-400 font-bold uppercase tracking-wider" id="bLocation">CHURCH SQUARE ➔ HATFIELD</div>
-    <div class="text-sm italic text-zinc-300" id="bSlang">"O kae gauta? Standard trip."</div>
-    <div class="text-2xl font-black text-green-400" id="bFare">R150</div>
-    <div class="grid grid-cols-2 gap-2 pt-2">
-      <button onclick="acceptTrip()" class="bg-green-500 text-black font-black py-3 rounded-xl text-xs pulse-anim">ACCEPT FARE</button>
-      <button onclick="counterBid()" class="bg-yellow-400 text-black font-black py-3 rounded-xl text-xs">COUNTER +R30</button>
-    </div>
-    <button onclick="declineTrip()" class="w-full bg-zinc-800 text-zinc-400 text-xs py-2 rounded-xl">Decline Request</button>
-  </div>
-</div>
-
-<!-- 3D CANVAS CONTAINER -->
-<div id="canvasContainer" class="hidden relative flex-1 w-full h-full">
-  <canvas id="webgl-canvas"></canvas>
-  
-  <!-- TRIP FINISHED AD OVERLAY -->
-  <div id="tripAdOverlay" class="hidden absolute inset-0 bg-black/90 z-40 flex flex-col justify-center items-center p-4 text-center">
-    <div class="text-2xl font-black text-yellow-400 mb-2">TRIP COMPLETED!</div>
-    <div id="adFareEarned" class="text-xl font-bold text-green-400 mb-4">+R0 Earned</div>
-    <div class="bg-white p-2 rounded-xl text-black w-full max-w-xs mb-4">
-      <span class="text-[9px] font-bold text-zinc-600 block">SPONSORED ADVERTISEMENT</span>
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-8539625352833164" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    </div>
-    <div class="text-xs text-zinc-400">Continuing trip in <span id="adCountdown">3</span>s...</div>
-  </div>
-</div>
-
-<!-- TOUCH CONTROLS -->
-<div id="controls" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 border-t border-zinc-800 p-2 max-w-md mx-auto">
-  <div class="grid grid-cols-4 gap-2 mb-2">
-    <button id="btnLeft" class="bg-zinc-800 active:bg-zinc-700 py-4 rounded-xl text-xl font-bold">⬅️</button>
-    <button id="btnRight" class="bg-zinc-800 active:bg-zinc-700 py-4 rounded-xl text-xl font-bold">➡️</button>
-    <button id="btnPick" class="bg-yellow-400 text-black font-black py-4 rounded-xl text-xs col-span-2">PICK / DROP</button>
-  </div>
-  <div class="grid grid-cols-3 gap-2">
-    <button onclick="triggerHoot()" class="bg-zinc-800 active:bg-zinc-700 py-2 rounded-lg text-xs font-bold text-yellow-400">📢 HOOT</button>
-    <button onclick="triggerNitro()" class="bg-cyan-600 active:bg-cyan-500 py-2 rounded-lg text-xs font-bold text-white">⚡ NITRO</button>
-    <button onclick="watchAdForFuel()" class="bg-green-600 active:bg-green-500 py-2 rounded-lg text-xs font-bold text-white">⛽ REFUEL (AD)</button>
-  </div>
-</div>
-
-<script>
-// REGISTER SERVICE WORKER VIA BLOB URL (PWA & OFFLINE FAST LOADS)
-if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE_NAME = 'indrives-v1';
-    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['./']))));
-    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-  `;
-  const blob = new Blob([swCode], { type: 'text/javascript' });
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-}
-
-// PERSISTENT GAME DATA
-let money = parseInt(localStorage.getItem('indrive_money')) || 100000;
-let tripsCompleted = parseInt(localStorage.getItem('indrive_trips')) || 0;
-let totalEarnings = parseInt(localStorage.getItem('indrive_earnings')) || 0;
-let ownedCarIds = JSON.parse(localStorage.getItem('indrive_owned')) || ['corolla'];
-let activeCarId = localStorage.getItem('indrive_active') || 'corolla';
-let audioEnabled = true;
-
-const cars = [
-  { id: 'corolla', name: 'Toyota Corolla 2008', price: 75000, speed: 0.8, fuelBurn: 0.015, color: 0xffffff, img: '🚗', desc: 'Reliable kasi workhorse. Low fuel burn.' },
-  { id: 'polo', name: 'VW Polo Vivo', price: 95000, speed: 1.1, fuelBurn: 0.02, color: 0x3b82f6, img: '🚙', desc: 'Agile & fast through Pretoria traffic.' },
-  { id: 'quantum', name: 'Toyota Quantum Siyaya', price: 120000, speed: 0.7, fuelBurn: 0.025, color: 0xf59e0b, img: '🚐', desc: 'Carry multi-passengers for double fares!' },
-  { id: 'bmw', name: 'BMW 320i E30 Gusheshe', price: 150000, speed: 1.4, fuelBurn: 0.035, color: 0x2563eb, img: '🏎️', desc: 'Kasi legend. Rapid acceleration & pops.' },
-  { id: 'gti', name: 'Golf 7 GTI Vrr Pha', price: 180000, speed: 1.5, fuelBurn: 0.038, color: 0xef4444, img: '🏎️', desc: 'Exhaust pops & high passenger tips!' },
-  { id: 'benz', name: 'Mercedes V-Class VIP', price: 250000, speed: 1.2, fuelBurn: 0.022, color: 0x18181b, img: '🚘', desc: 'VIP InDrive trips with massive payouts.' }
-];
-
-const spots = [
-  { x: -80, z: -80, name: 'Church Square' },
-  { x: 80, z: -80, name: 'Loftus Versfeld' },
-  { x: -80, z: 80, name: 'Sunnyside' },
-  { x: 80, z: 80, name: 'Hatfield Gautrain' },
-  { x: 0, z: 0, name: 'Pretoria CBD' },
-  { x: 120, z: 120, name: 'Menlyn Park' },
-  { x: -120, z: 120, name: 'Union Buildings' }
-];
-
-const slangList = [
-  "Eish bra, take me quickly!", "Dankie ntwan'a!", "O kae gauta?", "Pretoria West broer!", "Sharp sharp captain!"
-];
-
-// WEB AUDIO SYNTHESIZER
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-
-function initAudio() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-}
-
-function playTone(freq, type, duration, gainVal=0.1) {
-  if (!audioEnabled) return;
-  initAudio();
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-  } catch(e) {}
-}
-
-function triggerHoot() {
-  playTone(440, 'sawtooth', 0.15, 0.2);
-  setTimeout(() => playTone(550, 'sawtooth', 0.25, 0.2), 80);
-}
-
-function playCoinChime() {
-  playTone(987.77, 'sine', 0.1, 0.15);
-  setTimeout(() => playTone(1318.51, 'sine', 0.3, 0.2), 100);
-}
-
-function playPopExhaust() {
-  playTone(120, 'square', 0.05, 0.3);
-  setTimeout(() => playTone(80, 'square', 0.08, 0.3), 40);
-}
-
-function toggleAudio() {
-  audioEnabled = !audioEnabled;
-  document.getElementById('audioBtn').innerText = audioEnabled ? 'ENABLED' : 'DISABLED';
-  document.getElementById('audioBtn').className = audioEnabled ? 'bg-yellow-400 text-black font-black px-3 py-1 rounded-lg' : 'bg-zinc-800 text-zinc-400 font-bold px-3 py-1 rounded-lg';
-}
-
-// GARAGE & SHOP SYSTEM
-function saveState() {
-  localStorage.setItem('indrive_money', money);
-  localStorage.setItem('indrive_trips', tripsCompleted);
-  localStorage.setItem('indrive_earnings', totalEarnings);
-  localStorage.setItem('indrive_owned', JSON.stringify(ownedCarIds));
-  localStorage.setItem('indrive_active', activeCarId);
-}
-
-function updateGarageUI() {
-  document.getElementById('moneyDisplay').innerText = 'R' + money.toLocaleString();
-  document.getElementById('statTrips').innerText = tripsCompleted;
-  document.getElementById('statEarnings').innerText = 'R' + totalEarnings.toLocaleString();
-  
-  const shop = document.getElementById('shopList');
-  shop.innerHTML = '';
-
-  cars.forEach(car => {
-    const isOwned = ownedCarIds.includes(car.id);
-    const isActive = activeCarId === car.id;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casenova InDrives - Pretoria 3D Velocity</title>
     
-    let btnHTML = '';
-    if (isActive) {
-      btnHTML = `<span class="bg-green-500/20 text-green-400 border border-green-500/40 text-[10px] font-black px-3 py-1.5 rounded-lg">DRIVING NOW</span>`;
-    } else if (isOwned) {
-      btnHTML = `<button onclick="selectCar('${car.id}')" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs border border-zinc-700">SELECT</button>`;
-    } else {
-      btnHTML = `<button onclick="buyCar('${car.id}')" class="bg-yellow-400 hover:bg-yellow-300 text-black font-black px-3 py-1.5 rounded-lg text-xs ${money < car.price ? 'opacity-50' : ''}">${money >= car.price ? 'BUY' : 'NO CASH'}</button>`;
-    }
+    <!-- PWA & Monetization Metadata -->
+    <meta name="google-adsense-account" content="ca-pub-8539625352833164">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8539625352833164" crossorigin="anonymous"></script>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./icon.png">
 
-    shop.innerHTML += `
-      <div class="bg-zinc-900 p-3 rounded-2xl border ${isActive ? 'border-yellow-400' : 'border-zinc-800'} flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="text-3xl bg-zinc-950 p-2 rounded-xl">${car.img}</div>
-          <div>
-            <div class="font-bold text-sm text-white">${car.name}</div>
-            <div class="text-[10px] text-zinc-400">${car.desc}</div>
-            <div class="text-xs text-yellow-400 font-black mt-0.5">R${car.price.toLocaleString()}</div>
-          </div>
+    <!-- Tailwind CSS & Three.js Engine CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        * { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #09090b; font-family: system-ui, -apple-system, sans-serif; }
+        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        .glass-panel { background: rgba(18, 18, 24, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .pulse-btn { animation: pulse 1.8s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white">
+
+    <!-- 3D WEBGL CANVAS -->
+    <div id="canvas-container"></div>
+
+    <!-- HUD OVERLAY (ACTIVE GAMEPLAY) -->
+    <div id="hud" class="hidden absolute top-0 left-0 right-0 z-20 p-4 max-w-lg mx-auto flex justify-between items-start pointer-events-none">
+        <!-- Speedometer & Cash -->
+        <div class="glass-panel p-3 rounded-2xl flex flex-col gap-1 pointer-events-auto">
+            <div class="text-xs text-zinc-400 font-bold tracking-wider uppercase">CASH EARNED</div>
+            <div id="hudCash" class="text-2xl font-black text-green-400">R100,000</div>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="text-xs text-yellow-400 font-bold">SPEED:</span>
+                <span id="hudSpeed" class="text-lg font-black text-white">0 km/h</span>
+            </div>
         </div>
-        <div>${btnHTML}</div>
-      </div>
-    `;
-  });
-  saveState();
-}
 
-function buyCar(id) {
-  const car = cars.find(c => c.id === id);
-  if (money >= car.price) {
-    money -= car.price;
-    ownedCarIds.push(car.id);
-    activeCarId = car.id;
-    playCoinChime();
-    updateGarageUI();
-    startGame();
-  } else {
-    alert("Not enough cash! Complete more trips in Pretoria.");
-  }
-}
+        <!-- Camera Switcher & Status -->
+        <div class="flex flex-col items-end gap-2 pointer-events-auto">
+            <button onclick="switchCameraView()" class="glass-panel hover:bg-zinc-800 text-yellow-400 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 border border-yellow-400/30">
+                📹 <span id="camLabel">CHASE CAM</span>
+            </button>
+            <div id="hudTrip" class="glass-panel px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300">
+                📍 Destination: Church Square
+            </div>
+        </div>
+    </div>
 
-function selectCar(id) {
-  activeCarId = id;
-  updateGarageUI();
-  startGame();
-}
+    <!-- GAME OVER OVERLAY -->
+    <div id="game-over" class="hidden absolute inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col justify-center items-center p-6 text-center">
+        <h1 class="text-5xl font-black text-red-500 tracking-tight mb-2">ACCIDENT DISASTER!</h1>
+        <p class="text-zinc-400 text-sm mb-6">You crashed into oncoming Pretoria traffic!</p>
+        <div class="glass-panel p-6 rounded-2xl border border-red-500/30 mb-6 max-w-xs w-full">
+            <div class="text-xs text-zinc-400 mb-1">FINAL SCORE</div>
+            <div id="finalScore" class="text-4xl font-black text-yellow-400 mb-3">0</div>
+            <div class="text-xs text-zinc-400 mb-1">TOTAL TRIP PAYOUT</div>
+            <div id="finalEarnings" class="text-2xl font-black text-green-400">+R0</div>
+        </div>
+        <button onclick="resetGame()" class="pulse-btn bg-green-500 hover:bg-green-400 text-black font-black text-lg px-8 py-3.5 rounded-2xl shadow-lg shadow-green-500/20">
+            PLAY AGAIN 🔄
+        </button>
+    </div>
 
-// THREE.JS 3D ENGINE & CAMERA SYSTEM
-let scene, camera, renderer;
-let carMesh, pMarkerMesh, dMarkerMesh;
-let cameraMode = 0; // 0: Chase, 1: Cockpit, 2: Top-Down
-const cameraModeNames = ["CHASE", "COCKPIT", "TOP-DOWN"];
+    <!-- MOBILE TOUCH CONTROLS -->
+    <div id="controls" class="hidden absolute bottom-4 left-0 right-0 z-20 px-4 max-w-lg mx-auto pointer-events-none">
+        <div class="grid grid-cols-2 gap-4 pointer-events-auto">
+            <button id="btnLeft" class="glass-panel active:bg-yellow-400/20 py-6 rounded-2xl text-3xl font-black border border-zinc-700/50 flex justify-center items-center">
+                ⬅️
+            </button>
+            <button id="btnRight" class="glass-panel active:bg-yellow-400/20 py-6 rounded-2xl text-3xl font-black border border-zinc-700/50 flex justify-center items-center">
+                ➡️
+            </button>
+        </div>
+    </div>
 
-let carPosX = 0, carPosZ = 0, carRotY = 0, currentSpeed = 0;
-let fuel = 100, nitro = 100;
-let currentPassenger = null, currentDrop = null, pendingFare = 0;
-let activeJobText = "Searching for trip...";
-let animId = null;
+    <!-- MAIN GAME SCRIPT -->
+    <script>
+        // --- Game & Graphics Engine Setup ---
+        let scene, camera, renderer;
+        let carGroup, carBodyMesh;
+        let roadChunks = [];
+        let obstacles = [];
+        let streetLights = [];
+        let particles = [];
+        
+        let score = 0;
+        let cash = 100000;
+        let carSpeed = 0.8;
+        let maxSpeed = 1.8;
+        let currentLaneX = 0; // Target X coordinate (-4.5, 0, 4.5)
+        let isGameOver = false;
 
-let keys = { left: false, right: false };
+        // Camera Modes: 0 = Third Person Chase, 1 = First Person Cockpit, 2 = Top Down Tactical
+        let cameraMode = 0;
+        const cameraLabels = ["CHASE CAM", "COCKPIT", "TOP-DOWN"];
 
-function init3DScene() {
-  const container = document.getElementById('canvasContainer');
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x18181b);
-  scene.fog = new THREE.FogExp2(0x18181b, 0.005);
+        const keys = { left: false, right: false };
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        function initEngine() {
+            const container = document.getElementById('canvas-container');
 
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            // 1. Scene & Environment Fog
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a10);
+            scene.fog = new THREE.FogExp2(0x0a0a10, 0.012);
 
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-  scene.add(ambientLight);
+            // 2. Camera Setup
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-  const dirLight = new THREE.DirectionalLight(0xfef08a, 0.8);
-  dirLight.position.set(50, 100, 50);
-  scene.add(dirLight);
+            // 3. WebGL Renderer with Shadows & High Resolution
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            container.appendChild(renderer.domElement);
 
-  // Ground / Roads
-  const groundGeo = new THREE.PlaneGeometry(600, 600);
-  const groundMat = new THREE.MeshLambertMaterial({ color: 0x14532d });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI / 2;
-  scene.add(ground);
+            // 4. Lighting Engine
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
 
-  // Roads Grid
-  const roadMat = new THREE.MeshLambertMaterial({ color: 0x27272a });
-  for (let i = -200; i <= 200; i += 80) {
-    const rGeoH = new THREE.PlaneGeometry(600, 12);
-    const rMeshH = new THREE.Mesh(rGeoH, roadMat);
-    rMeshH.rotation.x = -Math.PI / 2;
-    rMeshH.position.set(0, 0.1, i);
-    scene.add(rMeshH);
+            const sunLight = new THREE.DirectionalLight(0xffecd2, 1.2);
+            sunLight.position.set(50, 100, 50);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            sunLight.shadow.camera.near = 0.5;
+            sunLight.shadow.camera.far = 250;
+            scene.add(sunLight);
 
-    const rGeoV = new THREE.PlaneGeometry(12, 600);
-    const rMeshV = new THREE.Mesh(rGeoV, roadMat);
-    rMeshV.rotation.x = -Math.PI / 2;
-    rMeshV.position.set(i, 0.1, 0);
-    scene.add(rMeshV);
-  }
+            // 5. Build Environment & Player Vehicle
+            createPlayerVehicle();
+            for (let i = 0; i < 5; i++) {
+                spawnRoadChunk(i * -80);
+            }
 
-  // Pretoria Landmarks & Buildings
-  spots.forEach(s => {
-    const bGeo = new THREE.BoxGeometry(24, 30, 24);
-    const bMat = new THREE.MeshLambertMaterial({ color: 0x3f3f46 });
-    const bMesh = new THREE.Mesh(bGeo, bMat);
-    bMesh.position.set(s.x, 15, s.z);
-    scene.add(bMesh);
-  });
+            // 6. Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            setupInputListeners();
 
-  // Pickup & Drop Markers
-  const pGeo = new THREE.CylinderGeometry(4, 4, 1, 16);
-  pMarkerMesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: 0x22c55e }));
-  pMarkerMesh.position.set(0, -10, 0);
-  scene.add(pMarkerMesh);
-
-  dMarkerMesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
-  dMarkerMesh.position.set(0, -10, 0);
-  scene.add(dMarkerMesh);
-
-  buildCarMesh();
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-}
-
-function buildCarMesh() {
-  if (carMesh) scene.remove(carMesh);
-
-  const carData = cars.find(c => c.id === activeCarId);
-  carMesh = new THREE.Group();
-
-  // Body
-  const bodyGeo = new THREE.BoxGeometry(2.4, 1.4, 4.5);
-  const bodyMat = new THREE.MeshLambertMaterial({ color: carData.color });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.position.y = 1;
-  carMesh.add(body);
-
-  // Roof / Cabin
-  const cabinGeo = new THREE.BoxGeometry(2.1, 1.0, 2.4);
-  const cabinMat = new THREE.MeshLambertMaterial({ color: 0x18181b });
-  const cabin = new THREE.Mesh(cabinGeo, cabinMat);
-  cabin.position.set(0, 2.0, -0.3);
-  carMesh.add(cabin);
-
-  scene.add(carMesh);
-}
-
-function cycleCameraView() {
-  cameraMode = (cameraMode + 1) % 3;
-  document.getElementById('camName').innerText = cameraModeNames[cameraMode];
-}
-
-function startGame() {
-  document.getElementById('garage').classList.add('hidden');
-  document.getElementById('hud').classList.remove('hidden');
-  document.getElementById('canvasContainer').classList.remove('hidden');
-  document.getElementById('controls').classList.remove('hidden');
-
-  if (!scene) init3DScene();
-  buildCarMesh();
-
-  fuel = 100; nitro = 100;
-  carPosX = 0; carPosZ = 0; carRotY = 0;
-
-  updateHUD();
-  spawnTripCandidate();
-
-  if (animId) cancelAnimationFrame(animId);
-  animate();
-}
-
-function exitToGarage() {
-  document.getElementById('garage').classList.remove('hidden');
-  document.getElementById('hud').classList.add('hidden');
-  document.getElementById('canvasContainer').classList.add('hidden');
-  document.getElementById('controls').classList.add('hidden');
-  updateGarageUI();
-}
-
-function updateHUD() {
-  document.getElementById('hMoney').innerText = 'R' + money.toLocaleString();
-  document.getElementById('hFuel').innerText = `⛽ ${Math.floor(fuel)}%`;
-  document.getElementById('hJob').innerText = activeJobText;
-}
-
-function spawnTripCandidate() {
-  let pIdx = Math.floor(Math.random() * spots.length);
-  let dIdx = Math.floor(Math.random() * spots.length);
-  while (dIdx === pIdx) dIdx = Math.floor(Math.random() * spots.length);
-
-  currentPassenger = { ...spots[pIdx], picked: false };
-  currentDrop = spots[dIdx];
-  pendingFare = Math.floor(Math.random() * 120 + 130);
-
-  pMarkerMesh.position.set(currentPassenger.x, 0.5, currentPassenger.z);
-  dMarkerMesh.position.set(0, -10, 0);
-
-  document.getElementById('bLocation').innerText = `${currentPassenger.name} ➔ ${currentDrop.name}`;
-  document.getElementById('bSlang').innerText = `"${slangList[Math.floor(Math.random()*slangList.length)]}"`;
-  document.getElementById('bFare').innerText = `R${pendingFare}`;
-  document.getElementById('bidModal').classList.remove('hidden');
-}
-
-function acceptTrip() {
-  document.getElementById('bidModal').classList.add('hidden');
-  activeJobText = `Pick: ${currentPassenger.name}`;
-  updateHUD();
-  playCoinChime();
-}
-
-function counterBid() {
-  if (Math.random() > 0.3) {
-    pendingFare += 30;
-    document.getElementById('bFare').innerText = `R${pendingFare}`;
-    document.getElementById('bSlang').innerText = '"Eish fine, let\'s go!"';
-    setTimeout(acceptTrip, 600);
-  } else {
-    document.getElementById('bSlang').innerText = '"AWA! Too expensive bra!"';
-    setTimeout(declineTrip, 600);
-  }
-}
-
-function declineTrip() {
-  document.getElementById('bidModal').classList.add('hidden');
-  setTimeout(spawnTripCandidate, 1500);
-}
-
-// TOUCH CONTROLS
-document.getElementById('btnLeft').addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; });
-document.getElementById('btnLeft').addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; });
-document.getElementById('btnRight').addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; });
-document.getElementById('btnRight').addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; });
-
-window.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') keys.left = true; if (e.key === 'ArrowRight') keys.right = true; });
-window.addEventListener('keyup', e => { if (e.key === 'ArrowLeft') keys.left = false; if (e.key === 'ArrowRight') keys.right = false; });
-
-function triggerNitro() {
-  if (nitro >= 30) {
-    nitro -= 30;
-    const carData = cars.find(c => c.id === activeCarId);
-    carPosX += Math.sin(carRotY) * (carData.speed * 15);
-    carPosZ += Math.cos(carRotY) * (carData.speed * 15);
-    playTone(300, 'sawtooth', 0.3, 0.3);
-  }
-}
-
-function watchAdForFuel() {
-  fuel = 100;
-  updateHUD();
-  alert("⛽ Tank Full! Refueled via Ad view.");
-}
-
-// 3D ANIMATION LOOP
-function animate() {
-  const carData = cars.find(c => c.id === activeCarId);
-
-  // Steering & Movement
-  if (keys.left) carRotY += 0.04;
-  if (keys.right) carRotY -= 0.04;
-
-  currentSpeed = carData.speed;
-  carPosX += Math.sin(carRotY) * currentSpeed;
-  carPosZ += Math.cos(carRotY) * currentSpeed;
-
-  carMesh.position.set(carPosX, 0, carPosZ);
-  carMesh.rotation.y = carRotY;
-
-  // Fuel depletion
-  fuel -= carData.fuelBurn;
-  if (fuel <= 0) fuel = 0;
-  updateHUD();
-
-  // Exhaust pops sound for GTI / BMW
-  if (Math.random() < 0.03 && (carData.id === 'gti' || carData.id === 'bmw')) {
-    playPopExhaust();
-  }
-
-  // Camera Management
-  if (cameraMode === 0) { // Chase
-    camera.position.x = carPosX - Math.sin(carRotY) * 16;
-    camera.position.y = 8;
-    camera.position.z = carPosZ - Math.cos(carRotY) * 16;
-    camera.lookAt(carPosX, 2, carPosZ);
-  } else if (cameraMode === 1) { // Cockpit
-    camera.position.x = carPosX + Math.sin(carRotY) * 0.2;
-    camera.position.y = 2.2;
-    camera.position.z = carPosZ + Math.cos(carRotY) * 0.2;
-    camera.lookAt(carPosX + Math.sin(carRotY) * 20, 2, carPosZ + Math.cos(carRotY) * 20);
-  } else { // Top-Down
-    camera.position.set(carPosX, 60, carPosZ);
-    camera.lookAt(carPosX, 0, carPosZ);
-  }
-
-  renderer.render(scene, camera);
-  animId = requestAnimationFrame(animate);
-}
-
-// PICKUP / DROP ACTION
-document.getElementById('btnPick').addEventListener('click', () => {
-  if (!currentPassenger) return;
-
-  let target = currentPassenger.picked ? currentDrop : currentPassenger;
-  let dist = Math.hypot(carPosX - target.x, carPosZ - target.z);
-
-  if (dist < 15) {
-    if (!currentPassenger.picked) {
-      currentPassenger.picked = true;
-      activeJobText = `Drop at: ${currentDrop.name}`;
-      pMarkerMesh.position.set(0, -10, 0);
-      dMarkerMesh.position.set(currentDrop.x, 0.5, currentDrop.z);
-      playCoinChime();
-      updateHUD();
-    } else {
-      // Completed Trip
-      money += pendingFare;
-      totalEarnings += pendingFare;
-      tripsCompleted++;
-      saveState();
-
-      dMarkerMesh.position.set(0, -10, 0);
-      document.getElementById('adFareEarned').innerText = `+R${pendingFare} Earned!`;
-      document.getElementById('tripAdOverlay').classList.remove('hidden');
-
-      let cd = 3;
-      let timer = setInterval(() => {
-        cd--;
-        document.getElementById('adCountdown').innerText = cd;
-        if (cd <= 0) {
-          clearInterval(timer);
-          document.getElementById('tripAdOverlay').classList.add('hidden');
-          spawnTripCandidate();
+            // 7. Start Main Loop
+            document.getElementById('hud').classList.remove('hidden');
+            document.getElementById('controls').classList.remove('hidden');
+            animate();
         }
-      }, 1000);
-    }
-  }
-});
 
-// INITIALIZE ON LOAD
-updateGarageUI();
-</script>
+        // --- Create High-Detail Vehicle ---
+        function createPlayerVehicle() {
+            carGroup = new THREE.Group();
+
+            // Car Chassis
+            const bodyGeo = new THREE.BoxGeometry(2.2, 1.2, 4.6);
+            const bodyMat = new THREE.MeshStandardMaterial({ 
+                color: 0x2563eb, 
+                roughness: 0.2, 
+                metalness: 0.8 
+            });
+            carBodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+            carBodyMesh.position.y = 0.8;
+            carBodyMesh.castShadow = true;
+            carGroup.add(carBodyMesh);
+
+            // Cabin Roof
+            const cabinGeo = new THREE.BoxGeometry(1.9, 0.9, 2.4);
+            const cabinMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.1 });
+            const cabin = new THREE.Mesh(cabinGeo, cabinMat);
+            cabin.position.set(0, 1.7, -0.3);
+            cabin.castShadow = true;
+            carGroup.add(cabin);
+
+            // Headlights & Tail Lights
+            const headlightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const headlight1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.1), headlightMat);
+            headlight1.position.set(-0.8, 0.8, -2.31);
+            const headlight2 = headlight1.clone();
+            headlight2.position.x = 0.8;
+            carGroup.add(headlight1, headlight2);
+
+            // Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.35, 24);
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+            wheelGeo.rotateZ(Math.PI / 2);
+
+            const wheelPositions = [
+                [-1.15, 0.45, -1.4], [1.15, 0.45, -1.4],
+                [-1.15, 0.45, 1.4],  [1.15, 0.45, 1.4]
+            ];
+
+            wheelPositions.forEach(pos => {
+                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+                wheel.position.set(pos[0], pos[1], pos[2]);
+                wheel.castShadow = true;
+                carGroup.add(wheel);
+            });
+
+            carGroup.position.set(0, 0, 0);
+            scene.add(carGroup);
+        }
+
+        // --- Procedural Road & Environment Generation ---
+        function spawnRoadChunk(zPosition) {
+            const chunkGroup = new THREE.Group();
+
+            // Main Road Surface
+            const roadGeo = new THREE.PlaneGeometry(16, 80);
+            const roadMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.8 });
+            const road = new THREE.Mesh(roadGeo, roadMat);
+            road.rotation.x = -Math.PI / 2;
+            road.receiveShadow = true;
+            chunkGroup.add(road);
+
+            // Lane Divider Markings
+            const lineGeo = new THREE.PlaneGeometry(0.3, 4);
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+
+            for (let z = -35; z < 40; z += 10) {
+                const lineLeft = new THREE.Mesh(lineGeo, lineMat);
+                lineLeft.rotation.x = -Math.PI / 2;
+                lineLeft.position.set(-2.6, 0.02, z);
+
+                const lineRight = lineLeft.clone();
+                lineRight.position.x = 2.6;
+
+                chunkGroup.add(lineLeft, lineRight);
+            }
+
+            // Streetlights
+            const lightPoleGeo = new THREE.CylinderGeometry(0.1, 0.1, 8);
+            const lightPoleMat = new THREE.MeshStandardMaterial({ color: 0x4b5563 });
+            const pole = new THREE.Mesh(lightPoleGeo, lightPoleMat);
+            pole.position.set(-9, 4, 0);
+
+            const spotLight = new THREE.SpotLight(0xfff5c0, 1.5, 25, Math.PI / 4, 0.5);
+            spotLight.position.set(-9, 8, 0);
+            spotLight.target.position.set(-2, 0, 0);
+            chunkGroup.add(pole, spotLight, spotLight.target);
+
+            chunkGroup.position.z = zPosition;
+            scene.add(chunkGroup);
+            roadChunks.push(chunkGroup);
+        }
+
+        // --- Obstacle Vehicle Spawner ---
+        function spawnObstacle() {
+            if (isGameOver) return;
+
+            const lanes = [-4.5, 0, 4.5];
+            const randomLane = lanes[Math.floor(Math.random() * lanes.length)];
+
+            const obsGroup = new THREE.Group();
+            const obsGeo = new THREE.BoxGeometry(2.1, 1.3, 4.2);
+            const obsMat = new THREE.MeshStandardMaterial({ 
+                color: Math.random() > 0.5 ? 0xef4444 : 0x10b981, 
+                roughness: 0.3 
+            });
+            const obsMesh = new THREE.Mesh(obsGeo, obsMat);
+            obsMesh.position.y = 0.65;
+            obsMesh.castShadow = true;
+            obsGroup.add(obsMesh);
+
+            obsGroup.position.set(randomLane, 0, carGroup.position.z - 120);
+            scene.add(obsGroup);
+            obstacles.push(obsGroup);
+        }
+
+        setInterval(spawnObstacle, 1200);
+
+        // --- Control Handling ---
+        function setupInputListeners() {
+            const btnLeft = document.getElementById('btnLeft');
+            const btnRight = document.getElementById('btnRight');
+
+            const moveLeft = () => { if (currentLaneX > -4.5) currentLaneX -= 4.5; };
+            const moveRight = () => { if (currentLaneX < 4.5) currentLaneX += 4.5; };
+
+            btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft(); });
+            btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); moveRight(); });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') moveLeft();
+                if (e.key === 'ArrowRight' || e.key === 'd') moveRight();
+            });
+        }
+
+        function switchCameraView() {
+            cameraMode = (cameraMode + 1) % 3;
+            document.getElementById('camLabel').innerText = cameraLabels[cameraMode];
+        }
+
+        // --- Main Gameplay & Render Loop ---
+        function animate() {
+            if (!isGameOver) {
+                // 1. Move Car forward & smooth lane interpolation
+                carGroup.position.z -= carSpeed;
+                carGroup.position.x += (currentLaneX - carGroup.position.x) * 0.15;
+
+                // 2. Road Chunk Recycling
+                roadChunks.forEach(chunk => {
+                    if (chunk.position.z - carGroup.position.z > 40) {
+                        chunk.position.z -= 400; // Shift far ahead
+                    }
+                });
+
+                // 3. Obstacle Collision Detection & Scoring
+                for (let i = obstacles.length - 1; i >= 0; i--) {
+                    const obs = obstacles[i];
+                    
+                    // Simple AABB Bounding Box Check
+                    const carBox = new THREE.Box3().setFromObject(carGroup);
+                    const obsBox = new THREE.Box3().setFromObject(obs);
+
+                    if (carBox.intersectsBox(obsBox)) {
+                        triggerGameOver();
+                    }
+
+                    // Recycle passed obstacles
+                    if (obs.position.z > carGroup.position.z + 10) {
+                        scene.remove(obs);
+                        obstacles.splice(i, 1);
+                        score += 10;
+                        cash += 150;
+                        document.getElementById('hudCash').innerText = `R${cash.toLocaleString()}`;
+                    }
+                }
+
+                // 4. Update HUD Speed & Score Metrics
+                carSpeed = Math.min(maxSpeed, carSpeed + 0.0001);
+                document.getElementById('hudSpeed').innerText = `${Math.floor(carSpeed * 120)} km/h`;
+
+                // 5. Dynamic Camera Management
+                if (cameraMode === 0) { // Chase Cam
+                    camera.position.x = carGroup.position.x;
+                    camera.position.y = carGroup.position.y + 5;
+                    camera.position.z = carGroup.position.z + 12;
+                    camera.lookAt(carGroup.position.x, carGroup.position.y + 1, carGroup.position.z - 10);
+                } else if (cameraMode === 1) { // Cockpit Cam
+                    camera.position.x = carGroup.position.x;
+                    camera.position.y = carGroup.position.y + 1.6;
+                    camera.position.z = carGroup.position.z - 0.2;
+                    camera.lookAt(carGroup.position.x, carGroup.position.y + 1.6, carGroup.position.z - 20);
+                } else { // Top Down Cam
+                    camera.position.x = carGroup.position.x;
+                    camera.position.y = carGroup.position.y + 35;
+                    camera.position.z = carGroup.position.z - 5;
+                    camera.lookAt(carGroup.position.x, 0, carGroup.position.z - 5);
+                }
+            }
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalEarnings').innerText = `+R${(score * 15).toLocaleString()}`;
+            document.getElementById('game-over').classList.remove('hidden');
+        }
+
+        function resetGame() {
+            obstacles.forEach(obs => scene.remove(obs));
+            obstacles = [];
+            score = 0;
+            carSpeed = 0.8;
+            currentLaneX = 0;
+            carGroup.position.set(0, 0, 0);
+            isGameOver = false;
+
+            document.getElementById('game-over').classList.add('hidden');
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = initEngine;
+    </script>
 </body>
 </html>
